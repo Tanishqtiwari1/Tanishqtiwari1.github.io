@@ -19,6 +19,7 @@ const ALL_SECTIONS = [
   { id: 'now', label: 'Now' },
   { id: 'beyond', label: 'Beyond code' },
   { id: 'github', label: 'GitHub' },
+  { id: 'hire', label: 'Internships' },
   { id: 'contact', label: 'Contact' },
 ]
 
@@ -68,11 +69,16 @@ export default function Nav() {
 
       <header className="bar">
         <div className="bar-inner">
-          <Link to="/" className="bar-id">
-            <span className="sq accent-bg" aria-hidden="true" />
-            {profile.name}
-            <span className="role">— AI/ML Engineer</span>
-          </Link>
+          <div className="bar-left">
+            <Link to="/" className="bar-id">
+              <span className="sq accent-bg" aria-hidden="true" />
+              {profile.name}
+            </Link>
+            <a href={href('hire')} className="bar-avail" data-cursor="Hire">
+              <span className="avail-dot" aria-hidden="true" />
+              <span>{profile.availability.headline}</span>
+            </a>
+          </div>
 
           <nav aria-label="Primary">
             <ul className="bar-links">

@@ -594,24 +594,75 @@ export function Beyond() {
   )
 }
 
+/* ---------------- Open to internships ---------------- */
+const HIRE_ROLES = [
+  {
+    role: 'Software Engineering',
+    icon: '</>',
+    brings: 'Full-stack products end to end — React, TypeScript, FastAPI, REST APIs, auth, Docker and CI/CD.',
+    proof: '4 deployed projects, live on the web',
+  },
+  {
+    role: 'AI / ML',
+    icon: '∇',
+    brings: 'Models that ship — PyTorch, graph neural networks, NLP, XGBoost, honest evaluation and deployment.',
+    proof: '93.1% root-cause accuracy GNN · 80.6% multilingual classifier',
+  },
+]
+
+export function Hire() {
+  const a = profile.availability
+  return (
+    <section id="hire" className="section theme-dark hire-sec" aria-labelledby="hire-title">
+      <div className="hire-glow" aria-hidden="true" />
+      <div className="container">
+        <Reveal className="hire-top">
+          <span className="hire-status"><span className="avail-dot" aria-hidden="true" />Available now</span>
+          <span className="mono">10 — Hiring?</span>
+        </Reveal>
+        <h2 id="hire-title" className="hire-title">
+          <FitText text="Open to" className="hire-l1" hover />
+          <FitText text="Internships" className="hire-l2" delay={0.12} hover />
+        </h2>
+        <div className="hire-grid">
+          <Reveal className="hire-left">
+            <p className="hire-pitch">{a.pitch}</p>
+            <div className="hire-ctas">
+              <Magnetic><a href={`mailto:${links.email}?subject=${encodeURIComponent('Internship opportunity')}`} className="btn btn-accent hire-btn" data-cursor="Email">Email me about a role <ArrowUpRight /></a></Magnetic>
+              <Magnetic><a href={links.resume} download className="btn hire-btn">Download resume ↓</a></Magnetic>
+              <Magnetic><Ext href={links.linkedin} className="btn hire-btn">LinkedIn <ArrowUpRight /></Ext></Magnetic>
+            </div>
+          </Reveal>
+          <ul className="hire-cards" aria-label="Internship roles I'm looking for">
+            {HIRE_ROLES.map((r, i) => (
+              <Reveal as="li" key={r.role} delay={0.1 + i * 0.1}>
+                <Tilt className="hire-card spot" max={7}>
+                  <span className="hire-icon" aria-hidden="true">{r.icon}</span>
+                  <span className="mono">Role 0{i + 1}</span>
+                  <h3>{r.role}<br /><span>Internship</span></h3>
+                  <p>{r.brings}</p>
+                  <span className="hire-proof">✓ {r.proof}</span>
+                </Tilt>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ---------------- Contact + footer ---------------- */
 export function Contact() {
   return (
     <section id="contact" className="section contact theme-accent" aria-labelledby="contact-title">
       <div className="container">
-        <Reveal className="mono" style={{ marginBottom: '2rem' }}>10 — Contact</Reveal>
+        <Reveal className="mono" style={{ marginBottom: '2rem' }}>11 — Contact</Reveal>
         <h2 id="contact-title">
           <SplitText text="Let's build" />
           <br />
           <span className="serif"><SplitText text="something." delay={0.15} /></span>
         </h2>
-        <Reveal className="hire">
-          <span className="hire-status"><span className="avail-dot" aria-hidden="true" />Available now</span>
-          <p className="hire-pitch">{profile.availability.pitch}</p>
-          <ul className="hire-roles" aria-label="Roles I'm looking for">
-            {profile.availability.roles.map((r) => <li key={r}>{r} internship</li>)}
-          </ul>
-        </Reveal>
         <div className="contact-grid">
           <Reveal className="q">
             <span>Have an interesting idea?</span>

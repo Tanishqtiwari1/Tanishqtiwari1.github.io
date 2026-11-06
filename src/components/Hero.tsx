@@ -75,7 +75,7 @@ export default function Hero() {
         </motion.div>
 
         <motion.div className="hero-aside" {...fade(0.75)}>
-          <a href="#contact" className="avail" data-cursor="Hire">
+          <a href="#hire" className="avail" data-cursor="Hire">
             <span className="avail-dot" aria-hidden="true" />
             <span className="avail-text">
               <b>{profile.availability.headline}</b>
