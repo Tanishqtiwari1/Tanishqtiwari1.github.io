@@ -27,7 +27,12 @@ async function cached<T>(key: string, url: string): Promise<T> {
   return data
 }
 
-const LEVELS = ['rgba(0,0,0,.08)', 'rgba(0,0,0,.28)', 'rgba(0,0,0,.5)', 'rgba(0,0,0,.75)', '#0c0c0c']
+const LEVELS = ['rgba(255,255,255,.07)', 'rgba(255,79,0,.3)', 'rgba(255,79,0,.55)', 'rgba(255,79,0,.8)', '#ff4f00']
+const LANG_COLORS: Record<string, string> = { TypeScript: '#3178c6', JavaScript: '#f1e05a', Python: '#3572A5', 'Jupyter Notebook': '#DA5B0B', HTML: '#e34c26', CSS: '#663399', Java: '#b07219', 'C++': '#f34b7d' }
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '')
+/** Fallback description: project tagline if it's one of the portfolio projects, else the repo name in words. */
+const describe = (r: { name: string; description: string | null }) =>
+  r.description || projects.find((p) => norm(p.name) === norm(r.name))?.tagline || r.name.replace(/[-_]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 
 function ContributionGraph({ days }: { days: Day[] }) {
   const weeks = useMemo(() => {
@@ -57,7 +62,7 @@ function ContributionGraph({ days }: { days: Day[] }) {
   return (
     <svg viewBox={`0 0 ${w} ${h}`} role="img" aria-label="GitHub contribution graph for the last year">
       {months.map((m) => (
-        <text key={m.x} x={m.x} y={9} fill="#4a4a47" fontSize="9" fontFamily="JetBrains Mono Variable, monospace">{m.label}</text>
+        <text key={m.x} x={m.x} y={9} fill="#8e8d88" fontSize="9" fontFamily="JetBrains Mono Variable, monospace">{m.label}</text>
       ))}
       {weeks.map((wk, i) =>
         wk.map((d, j) =>
@@ -82,7 +87,7 @@ export default function GitHub() {
     cached<User>('gh-user', `https://api.github.com/users/${USER}`).then(setUser).catch(() => {})
     cached<Repo[]>('gh-repos', `https://api.github.com/users/${USER}/repos?per_page=100&sort=pushed`)
       .then((all) => {
-        const own = all.filter((r) => !r.fork)
+        const own = all.filter((r) => !r.fork && r.name.toLowerCase() !== `${USER}.github.io`.toLowerCase())
         const pinned = PINNED.map((n) => own.find((r) => r.name.toLowerCase() === n.toLowerCase())).filter(Boolean) as Repo[]
         const others = own.filter((r) => !pinned.includes(r))
         setRepos([...pinned, ...others].slice(0, MAX_REPOS))
@@ -118,7 +123,7 @@ export default function GitHub() {
           </div>
         </Reveal>
 
-        <Reveal className="gh-graph" delay={0.05}>
+        <Reveal className="gh-graph gh-dark" delay={0.05}>
           {contrib ? (
             <ContributionGraph days={contrib.contributions} />
           ) : failed.contrib ? (
@@ -138,11 +143,15 @@ export default function GitHub() {
           {repos
             ? repos.map((r, i) => (
                 <Reveal as="li" key={r.name} delay={i * 0.05}>
-                  <Ext href={r.html_url} className="gh-repo spot" label={`${r.name} repository on GitHub`}>
-                    <span className="name">{r.name}<ArrowUpRight /></span>
-                    <span className="d">{r.description || projects.find((p) => p.name.toLowerCase() === r.name.toLowerCase())?.tagline || 'Public repository.'}</span>
+                  <Ext href={r.html_url} className="gh-repo" label={`${r.name} repository on GitHub`}>
+                    <span className="gh-top">
+                      <span className="gh-idx">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="gh-arrow" aria-hidden="true"><ArrowUpRight size={16} /></span>
+                    </span>
+                    <span className="name">{r.name.replace(/[-_]+/g, ' ')}</span>
+                    <span className="d">{describe(r)}</span>
                     <span className="m mono">
-                      {r.language && <span>{r.language}</span>}
+                      {r.language && <span className="lang"><i style={{ background: LANG_COLORS[r.language] ?? '#ff4f00' }} />{r.language}</span>}
                       {r.stargazers_count > 0 && <span>★ {r.stargazers_count}</span>}
                     </span>
                   </Ext>

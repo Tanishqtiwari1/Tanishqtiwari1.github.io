@@ -530,8 +530,8 @@ export function Now() {
           {now.items.map((n, i) => (
             <Reveal as="li" className="now-item spot" key={n.title} delay={i * 0.05}>
               <span className="i">
-                <span className="mono">{String(i + 1).padStart(2, '0')}</span>
-                <span className="dot" aria-hidden="true" style={{ animationDelay: `${i * 0.3}s` }} />
+                <span className="now-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span className="now-live"><span className="dot" aria-hidden="true" style={{ animationDelay: `${i * 0.3}s` }} />Active</span>
               </span>
               <span>
                 <span className="t" style={{ display: 'block' }}>{n.title}</span>
