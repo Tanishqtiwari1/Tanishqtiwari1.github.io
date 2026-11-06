@@ -605,6 +605,13 @@ export function Contact() {
           <br />
           <span className="serif"><SplitText text="something." delay={0.15} /></span>
         </h2>
+        <Reveal className="hire">
+          <span className="hire-status"><span className="avail-dot" aria-hidden="true" />Available now</span>
+          <p className="hire-pitch">{profile.availability.pitch}</p>
+          <ul className="hire-roles" aria-label="Roles I'm looking for">
+            {profile.availability.roles.map((r) => <li key={r}>{r} internship</li>)}
+          </ul>
+        </Reveal>
         <div className="contact-grid">
           <Reveal className="q">
             <span>Have an interesting idea?</span>

@@ -58,7 +58,7 @@ export default function Hero() {
 
         <motion.div className="hero-badge" initial={{ opacity: 0, scale: 0.6, rotate: -40 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.9 }}>
           <a href="#work" aria-label="See the highlight project" data-cursor="Work">
-            <SpinBadge text="AI/ML ENGINEER ✦ SOFTWARE DEVELOPER ✦ OPEN TO COLLAB ✦ ">
+            <SpinBadge text="AI/ML ✦ SOFTWARE ✦ OPEN TO INTERNSHIPS ✦ ">
               <span className="spin-arrow">↓</span>
             </SpinBadge>
           </a>
@@ -75,9 +75,14 @@ export default function Hero() {
         </motion.div>
 
         <motion.div className="hero-aside" {...fade(0.75)}>
-          <span className="status mono" style={{ color: 'var(--fg)' }}>
-            <span className="dot" aria-hidden="true" /> Open to collaborations
-          </span>
+          <a href="#contact" className="avail" data-cursor="Hire">
+            <span className="avail-dot" aria-hidden="true" />
+            <span className="avail-text">
+              <b>{profile.availability.headline}</b>
+              <small>{profile.availability.roles.join(' · ')}</small>
+            </span>
+            <span className="avail-arrow" aria-hidden="true">→</span>
+          </a>
           <p className="hero-tagline">{profile.tagline}</p>
           <div className="hero-actions">
             <Magnetic>

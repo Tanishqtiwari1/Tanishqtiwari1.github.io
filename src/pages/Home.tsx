@@ -33,7 +33,7 @@ export default function Home() {
       <Now />
       <Beyond />
       <GitHub />
-      <Marquee className="mq-dark" reverse speed={2.5} items={["Let's build something", 'Open to internships', 'AI · Software · Hackathons', 'Say hello']} />
+      <Marquee className="mq-dark" reverse speed={2.5} items={["Let's build something", 'Software · AI/ML', 'AI · Software · Hackathons', 'Say hello']} />
       <Contact />
     </>
   )

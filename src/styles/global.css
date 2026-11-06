@@ -1067,3 +1067,26 @@ ul, ol { list-style: none; }
 .ig-meta p { color: #111; }
 .ig-meta p b { font-weight: 600; margin-right: 0.25rem; }
 .ig-toast { position: absolute; right: 0.85rem; top: 0; background: #111; color: #fff; font-size: 0.72rem; padding: 0.25rem 0.55rem; border-radius: 6px; }
+
+/* ---------- Availability: hero pill + contact card ---------- */
+.avail { display: inline-flex; align-items: center; gap: 0.7rem; width: fit-content; padding: 0.5rem 0.9rem 0.5rem 0.65rem; border-radius: 999px; background: #0c0c0c; color: #efeee9; box-shadow: 0 12px 30px -12px rgba(0,0,0,.5); position: relative; overflow: hidden; isolation: isolate; transition: transform 0.35s var(--ease); }
+.avail::before { content: ''; position: absolute; inset: 0; z-index: -1; background: #ff4f00; transform: translateX(-101%); transition: transform 0.5s var(--ease); }
+.avail:hover { transform: translateY(-2px); }
+.avail:hover::before { transform: translateX(0); }
+.avail:hover, .avail:hover small { color: #0c0c0c; }
+.avail-text { display: grid; line-height: 1.15; }
+.avail-text b { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+.avail-text small { font-size: 0.78rem; color: #b9b8b2; transition: color 0.3s; }
+.avail-arrow { transition: transform 0.35s var(--ease); }
+.avail:hover .avail-arrow { transform: translateX(4px); }
+.avail-dot { width: 9px; height: 9px; border-radius: 50%; background: #2ee66b; box-shadow: 0 0 0 0 rgba(46, 230, 107, 0.6); animation: avail-ping 2s infinite; flex: none; }
+.avail:hover .avail-dot { background: #0c0c0c; }
+@keyframes avail-ping { 0% { box-shadow: 0 0 0 0 rgba(46,230,107,.55); } 70% { box-shadow: 0 0 0 9px rgba(46,230,107,0); } 100% { box-shadow: 0 0 0 0 rgba(46,230,107,0); } }
+
+.hire { margin-top: clamp(2rem, 5vw, 3.5rem); display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1rem 2rem; padding: clamp(1.1rem, 2.5vw, 1.6rem) clamp(1.1rem, 2.5vw, 1.8rem); border-radius: 18px; background: #0c0c0c; color: #efeee9; }
+.hire-status { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.hire-pitch { font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.4; letter-spacing: -0.01em; }
+.hire-roles { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; }
+.hire-roles li { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.45rem 0.75rem; border-radius: 999px; background: #ff4f00; color: #0c0c0c; font-weight: 600; white-space: nowrap; }
+@media (max-width: 860px) { .hire { grid-template-columns: 1fr; } .hire-roles { justify-content: flex-start; } }
+@media (prefers-reduced-motion: reduce) { .avail-dot { animation: none; } }

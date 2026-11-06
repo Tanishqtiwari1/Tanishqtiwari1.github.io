@@ -12,6 +12,12 @@ export const profile = {
     'I build intelligent systems and software products that turn real-world problems into working solutions.',
   location: 'India',
   timezone: 'Asia/Kolkata',
+  /** Shown once in the hero and once in Contact — the single source for the "open to work" message. */
+  availability: {
+    headline: 'Open to internships',
+    roles: ['Software Engineering', 'AI/ML'],
+    pitch: 'Looking for Software Engineering and AI/ML internships where I can ship real products — from model to API to interface.',
+  },
   education: {
     degree: 'B.Tech Computer Science & Engineering',
     school: 'Manipal University Jaipur',
