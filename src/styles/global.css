@@ -1134,3 +1134,7 @@ ul, ol { list-style: none; }
   .beyond h2, .section-head h2 { overflow-wrap: anywhere; }
 }
 .pj-body > * { min-width: 0; } .pj-title { font-size: clamp(1.55rem, 4vw, 3.2rem); overflow-wrap: anywhere; }
+/* hero: secondary buttons get a solid fill so the giant name never shows through them */
+.hero-actions .btn:not(.btn-primary) { background: var(--bg); }
+@media (max-height: 820px) and (min-width: 961px) { .hero-aside { top: 24%; } .hero-side { top: 34%; } .hero-links { display: none; } }
+@media (min-width: 961px) and (max-width: 1240px) { .hero-aside { width: clamp(250px, 27%, 340px); } }
