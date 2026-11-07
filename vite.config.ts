@@ -26,7 +26,7 @@ function seoFiles(): Plugin {
     closeBundle() {
       const today = new Date().toISOString().slice(0, 10)
       writeFileSync(resolve(outDir, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`)
-      const urls = ROUTES.map((r) => `  <url><loc>${SITE_URL}${r}</loc><lastmod>${today}</lastmod><priority>${r === '/' ? '1.0' : '0.7'}</priority></url>`).join('\n')
+      const urls = ROUTES.map((r) => `  <url><loc>${SITE_URL}${r === '/' ? '/' : `${r}/`}</loc><lastmod>${today}</lastmod><priority>${r === '/' ? '1.0' : '0.7'}</priority></url>`).join('\n')
       writeFileSync(resolve(outDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`)
       // GitHub Pages SPA fallback: unknown paths serve the app, which routes client-side.
       copyFileSync(resolve(outDir, 'index.html'), resolve(outDir, '404.html'))
@@ -37,8 +37,8 @@ function seoFiles(): Plugin {
           .replace(/<title>[^<]*<\/title>/, `<title>${m.title}</title>`)
           .replaceAll(/(<meta (?:name|property)="(?:description|og:description|twitter:description)" content=")[^"]*"/g, `$1${m.description}"`)
           .replaceAll(/(<meta (?:property|name)="(?:og:title|twitter:title)" content=")[^"]*"/g, `$1${m.title}"`)
-          .replace(/(<link rel="canonical" href=")[^"]*"/, `$1${SITE_URL}${route}"`)
-          .replace(/(<meta property="og:url" content=")[^"]*"/, `$1${SITE_URL}${route}"`)
+          .replace(/(<link rel="canonical" href=")[^"]*"/, `$1${SITE_URL}${route}/"`)
+          .replace(/(<meta property="og:url" content=")[^"]*"/, `$1${SITE_URL}${route}/"`)
         mkdirSync(resolve(outDir, route.slice(1)), { recursive: true })
         writeFileSync(resolve(outDir, route.slice(1), 'index.html'), html)
       }
