@@ -8,9 +8,24 @@ npm run dev      # http://localhost:5173
 npm run build    # outputs dist/ (+ robots.txt, sitemap.xml, 404.html)
 ```
 
+## Quality checks
+
+```bash
+npm run lint    # oxlint — TypeScript, React, React hooks, jsx-a11y
+npm test        # vitest — content integrity + terminal commands
+npm run check   # type-check + lint + tests
+```
+
+CI runs lint and tests before every deploy; a failure blocks the release.
+
+- **Why oxlint, not ESLint:** the project uses TypeScript 7, which doesn't ship the JS compiler API that `typescript-eslint` needs.
+- **Content tests** (`tests/content.test.ts`) fail the build if a metric loses its evaluation context, an image or the resume PDF goes missing, a project route isn't prerendered, or a `TODO` reaches the live site.
+- **Rules relaxed on purpose** (`.oxlintrc.json`): `prefer-tag-over-role` (Framer Motion dialogs and `<svg role="img">` are valid ARIA), `no-autofocus` (focus moves into opened dialogs), `jsx-no-comment-textnodes` (the `//` in headings is visible text), `no-unassigned-import` (font/CSS side-effect imports). React-compiler purity/effect rules are warnings: `Date()` for "upcoming" badges and route-change effects are intentional.
+
 ## Editing content
-- `src/data/site.ts` — profile, links, timeline, stack, highlights, hackathons, **Now**, Beyond Code
-- `src/data/projects.ts` — projects + case studies (sections left out simply don't render)
+- `src/data/site.ts` — profile, links, timeline (grouped), skills, highlights, hackathons, **Now**, Beyond Code, gallery
+- `src/lib/terminal.ts` — the optional terminal's commands (open with the `›_` button or the backtick key)
+- `src/data/projects.ts` — projects + case studies: contribution, evaluation (data, method, limitations), docs links, architecture (nodes with `detail` become interactive)
 - `public/Tanishq_Tewari_Resume.pdf` — resume served by the Resume buttons
 - `public/og.png` — social preview image (source: `scripts/og.html`)
 

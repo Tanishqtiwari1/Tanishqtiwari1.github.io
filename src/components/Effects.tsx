@@ -12,7 +12,7 @@ import {
   useVelocity,
   wrap,
 } from 'framer-motion'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 
 /* ---------------- Scroll progress ---------------- */
 export function ScrollProgress() {
@@ -93,7 +93,7 @@ export function CountUp({ value, className }: { value: string; className?: strin
 
 /* ---------------- Rotating circular badge ---------------- */
 export function SpinBadge({ text, className = '', children }: { text: string; className?: string; children?: ReactNode }) {
-  const id = useRef(`c${Math.random().toString(36).slice(2, 8)}`).current
+  const id = `c${useId().replace(/:/g, '')}`
   return (
     <div className={`spin-badge ${className}`} aria-hidden="true">
       <svg viewBox="0 0 200 200">

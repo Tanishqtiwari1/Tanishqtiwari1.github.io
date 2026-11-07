@@ -3,12 +3,14 @@ import { lazy, Suspense, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { BackToTop, ScrollProgress, Spotlight } from './components/Effects'
 import Nav from './components/Nav'
+import Terminal from './components/Terminal'
 import { Footer } from './components/Sections'
 import { EASE } from './components/ui'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 
 const CaseStudy = lazy(() => import('./pages/CaseStudy'))
+const ResumePage = lazy(() => import('./pages/ResumePage'))
 
 function Page({ children }: { children: React.ReactNode }) {
   return (
@@ -46,11 +48,13 @@ export default function App() {
       <ScrollProgress />
       <Spotlight />
       <BackToTop />
+      <Terminal />
       <Nav />
       <main id="main">
         <AnimatePresence mode="wait" initial={false}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Page><Home /></Page>} />
+            <Route path="/resume" element={<Page><Suspense fallback={<div style={{ minHeight: '100svh' }} />}><ResumePage /></Suspense></Page>} />
             <Route path="/work/:slug" element={<Page><Suspense fallback={<div style={{ minHeight: '100svh' }} />}><CaseStudy /></Suspense></Page>} />
             <Route path="*" element={<Page><NotFound /></Page>} />
           </Routes>

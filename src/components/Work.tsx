@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { mainProjects, type Project } from '../data/projects'
 import { links } from '../data/site'
+import { ArchDiagram } from './Arch'
 import { CountUp, Tilt } from './Effects'
 import { ArrowUpRight, Ext, Magnetic, Reveal, SectionHead } from './ui'
 
@@ -22,6 +23,32 @@ function Shot({ p, priority = false }: { p: Project; priority?: boolean }) {
         <span className="pj-placeholder">TODO: add a screenshot of {p.name}</span>
       )}
     </Link>
+  )
+}
+
+function Docs({ p }: { p: Project }) {
+  if (!p.docs?.length) return null
+  return (
+    <ul className="pj-docs" aria-label={`${p.name} documentation`}>
+      {p.docs.map((d) => (
+        <li key={d.href}><Ext href={d.href} className="text-link">{d.label} ↗</Ext></li>
+      ))}
+    </ul>
+  )
+}
+
+function Evaluation({ p }: { p: Project }) {
+  if (!p.evaluation) return null
+  const e = p.evaluation
+  return (
+    <details className="pj-eval">
+      <summary>How these numbers were measured <span aria-hidden="true">+</span></summary>
+      <dl>
+        <div><dt>Data</dt><dd>{e.dataset}</dd></div>
+        <div><dt>Method</dt><dd>{e.method}</dd></div>
+        <div><dt>Limitations</dt><dd><ul>{e.limitations.map((l) => <li key={l}>{l}</li>)}</ul></dd></div>
+      </dl>
+    </details>
   )
 }
 
@@ -101,6 +128,21 @@ export function Featured() {
           </Reveal>
         </div>
 
+        <div className="ft-split">
+          {p.contribution && (
+            <Reveal className="ft-block">
+              <span className="mono">My contribution</span>
+              <ul className="pj-features">{p.contribution.map((c) => <li key={c}>{c}</li>)}</ul>
+            </Reveal>
+          )}
+          {p.study.architecture && (
+            <Reveal className="ft-arch" delay={0.08}>
+              <span className="mono">Architecture — interactive</span>
+              <ArchDiagram label={`${p.name} architecture`} {...p.study.architecture} />
+            </Reveal>
+          )}
+        </div>
+
         {p.study.results && (
           <ul className="ft-stats" aria-label={`${p.name} results`}>
             {p.study.results.slice(0, 4).map((s, i) => (
@@ -112,6 +154,11 @@ export function Featured() {
             ))}
           </ul>
         )}
+        {p.study.resultsNote && <p className="mono pj-note">{p.study.resultsNote}</p>}
+        <div className="ft-foot">
+          <Evaluation p={p} />
+          <Docs p={p} />
+        </div>
       </div>
     </section>
   )
@@ -141,18 +188,36 @@ export function Showcase() {
                 <h3 id={`pj-${p.slug}`} className="pj-title"><Link to={`/work/${p.slug}`}>{p.name}</Link></h3>
                 <p className="pj-tag">{p.tagline}</p>
                 <p className="pj-desc">{p.description}</p>
-                <ul className="pj-features">
-                  {features(p, 3).map((f) => <li key={f.title}><b>{f.title}</b> — {f.body}</li>)}
-                </ul>
+                {p.contribution ? (
+                  <div className="pj-block">
+                    <span className="mono">My contribution</span>
+                    <ul className="pj-features">{p.contribution.map((c) => <li key={c}>{c}</li>)}</ul>
+                  </div>
+                ) : (
+                  <ul className="pj-features">
+                    {features(p, 3).map((f) => <li key={f.title}><b>{f.title}</b> — {f.body}</li>)}
+                  </ul>
+                )}
+                {(p.study.architecture ?? p.study.pipeline) && (
+                  <p className="pj-arch">
+                    <span className="mono">{p.study.architecture ? 'Architecture' : 'Pipeline'}</span>
+                    {(p.study.architecture ?? p.study.pipeline)!.nodes.map((n) => n.label).join(' → ')}
+                  </p>
+                )}
                 {p.stats && (
                   <dl className="pj-stats">
                     {p.stats.slice(0, 3).map((s) => (
-                      <div key={s.label}><dt>{s.label}</dt><dd><CountUp value={s.value} /></dd></div>
+                      <div key={s.label}>
+                        <dt>{s.label}{s.how && <small>{s.how}</small>}</dt>
+                        <dd><CountUp value={s.value} /></dd>
+                      </div>
                     ))}
                   </dl>
                 )}
-                <div className="tags">{p.tech.slice(0, 6).map((t) => <span className="tag" key={t}>{t}</span>)}</div>
+                <div className="tags">{p.tech.slice(0, 7).map((t) => <span className="tag" key={t}>{t}</span>)}</div>
+                <Evaluation p={p} />
                 <Links p={p} />
+                <Docs p={p} />
               </div>
             </Reveal>
           ))}

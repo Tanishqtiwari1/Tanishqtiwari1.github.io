@@ -8,9 +8,10 @@ import { resolve } from 'node:path'
  * (e.g. Vercel / Netlify) or change the fallback below once you have a domain.
  */
 const SITE_URL = (process.env.SITE_URL || 'https://tanishqtiwari1.github.io').replace(/\/$/, '')
-const ROUTES = ['/', '/work/galligraph', '/work/blackbox', '/work/cardioguard', '/work/guildspace']
+const ROUTES = ['/', '/resume', '/work/galligraph', '/work/blackbox', '/work/cardioguard', '/work/guildspace']
 /** Per-route titles/descriptions baked into each prerendered HTML shell (good link previews + SEO). */
 const META: Record<string, { title: string; description: string }> = {
+  '/resume': { title: 'Resume — Tanishq Tewari', description: 'Resume of Tanishq Tewari: B.Tech CSE (AI & ML), Manipal University Jaipur — projects, achievements and skills.' },
   '/work/galligraph': { title: 'GalliGraph — Case study · Tanishq Tewari', description: 'AI-powered civic complaint intelligence platform. 2nd Place, OFFGRID Hackathon 2026.' },
   '/work/blackbox': { title: 'Black Box — Case study · Tanishq Tewari', description: 'Flight recorder and debugger for AI agents: a graph neural network finds the root cause of failed runs.' },
   '/work/cardioguard': { title: 'CardioGuard — Case study · Tanishq Tewari', description: 'Explainable, offline-first heart-disease risk screening for community health workers.' },

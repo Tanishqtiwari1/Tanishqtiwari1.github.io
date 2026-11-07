@@ -1,20 +1,7 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { links, profile } from '../data/site'
-import { SpinBadge } from './Effects'
 import { ArrowUpRight, EASE, Ext, FitText, Magnetic } from './ui'
-
-function useClock(tz: string) {
-  const fmt = () =>
-    new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date())
-  const [t, setT] = useState(fmt)
-  useEffect(() => {
-    const id = setInterval(() => setT(fmt()), 15000)
-    return () => clearInterval(id)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tz])
-  return t
-}
 
 const fade = (delay: number) => ({
   initial: { opacity: 0, y: 14 },
@@ -23,7 +10,6 @@ const fade = (delay: number) => ({
 })
 
 export default function Hero() {
-  const time = useClock(profile.timezone)
   const [first, last] = profile.name.split(' ')
   const ref = useRef<HTMLElement>(null)
   const reduce = useReducedMotion()
@@ -56,14 +42,6 @@ export default function Hero() {
           />
         </motion.figure>
 
-        <motion.div className="hero-badge" initial={{ opacity: 0, scale: 0.6, rotate: -40 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.9 }}>
-          <a href="#work" aria-label="Jump to projects">
-            <SpinBadge text="AI/ML ✦ SOFTWARE ✦ OPEN TO INTERNSHIPS ✦ ">
-              <span className="spin-arrow">↓</span>
-            </SpinBadge>
-          </a>
-        </motion.div>
-
         <motion.div className="hero-side" {...fade(0.6)}>
           <span className="hero-roles">{profile.roles}</span>
           <span className="mono" style={{ color: 'var(--fg)' }}>
@@ -72,9 +50,6 @@ export default function Hero() {
           <a href={profile.achievement.href} className="hero-award">
             <span aria-hidden="true">🏆</span> {profile.achievement.text}
           </a>
-          <span className="mono" style={{ color: 'var(--muted)' }}>
-            {profile.location} · {time} IST
-          </span>
         </motion.div>
 
         <motion.div className="hero-aside" {...fade(0.75)}>

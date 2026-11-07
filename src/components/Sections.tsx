@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion'
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { about, beyond, featuredPost, hackathons, highlights, links, now, profile, stack, timeline } from '../data/site'
+import { about, beyond, featuredPost, gallery, hackathons, highlights, links, now, profile, stack, timeline } from '../data/site'
 import { CountUp, ScrollWords, SpinBadge, Tilt } from './Effects'
 import { ArrowUpRight, EASE, Ext, FitText, Magnetic, Plus, Reveal, SectionHead, SplitText } from './ui'
 
@@ -60,6 +60,7 @@ export function About() {
 }
 
 /* ---------------- Experience / chronology ---------------- */
+const TL_GROUPS = ['Internships', 'Academic programs', 'Hackathons', 'Community'] as const
 function HoverPreview({ src, alt, x, y }: { src: string | null; alt: string; x: MotionValue<number>; y: MotionValue<number> }) {
   const sx = useSpring(x, { stiffness: 260, damping: 26 })
   const sy = useSpring(y, { stiffness: 260, damping: 26 })
@@ -88,7 +89,7 @@ export function Experience() {
   const [open, setOpen] = useState<number | null>(firstWithPhoto >= 0 ? firstWithPhoto : 0)
   const [hover, setHover] = useState<number | null>(null)
   const today = new Date()
-  const listRef = useRef<HTMLOListElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
   const fine = typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches
@@ -104,10 +105,19 @@ export function Experience() {
   return (
     <section id="experience" className="section" aria-labelledby="exp-title">
       <div className="container">
-        <SectionHead id="exp-title" kicker="03 — Experience" title="Experience" sub="the timeline" aside="Hover for photos · click to expand" />
-        <ol className="timeline" ref={listRef} onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
+        <SectionHead id="exp-title" kicker="03 — Experience" title="Experience" sub="the timeline" aside="Click an entry to expand" />
+        <div className="timeline-wrap" ref={listRef} onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
           <HoverPreview src={preview?.src ?? null} alt="" x={mx} y={my} />
+          <div className="tl-group">
+            <h3 className="tl-group-title"><span className="mono">00</span>Professional experience</h3>
+            <p className="tl-empty">No completed professional roles yet — my first internship (HCLTech) starts in December 2026.</p>
+          </div>
+          {TL_GROUPS.filter((g) => timeline.some((t) => t.group === g)).map((g, gi) => (
+          <div className="tl-group" key={g}>
+          <h3 className="tl-group-title"><span className="mono">{String(gi + 1).padStart(2, '0')}</span>{g === 'Internships' ? 'Upcoming internship' : g}</h3>
+          <ol className="timeline">
           {timeline.map((t, i) => {
+            if (t.group !== g) return null
             const isOpen = open === i
             const upcoming = t.start && new Date(t.start) > today
             const panelId = `tl-panel-${i}`
@@ -183,7 +193,10 @@ export function Experience() {
               </Reveal>
             )
           })}
-        </ol>
+          </ol>
+          </div>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -497,6 +510,66 @@ export function Now() {
   )
 }
 
+/* ---------------- Gallery (beyond code) ---------------- */
+function Gallery() {
+  const [open, setOpen] = useState<number | null>(null)
+  const items = gallery
+  const tiles = useRef<(HTMLButtonElement | null)[]>([])
+  const last = useRef(0)
+  const close = () => {
+    setOpen(null)
+    setTimeout(() => tiles.current[last.current]?.focus(), 0) // return focus to the photo that was opened
+  }
+  const step = (d: number) => setOpen((i) => (i == null ? i : (i + d + items.length) % items.length))
+  useEffect(() => {
+    if (open == null) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close()
+      if (e.key === 'ArrowRight') step(1)
+      if (e.key === 'ArrowLeft') step(-1)
+    }
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = '' }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
+  const it = open == null ? null : items[open]
+  return (
+    <div className="container gallery-wrap">
+      <div className="gallery-head">
+        <h3 className="gallery-title">Moments</h3>
+        <p className="mono">Event photography · credits on each image</p>
+      </div>
+      <ul className="gallery">
+        {items.map((g, i) => (
+          <Reveal as="li" key={g.src} className={g.wide ? 'wide' : ''} delay={i * 0.06}>
+            <button type="button" ref={(el) => { tiles.current[i] = el }} className="g-tile" onClick={() => { last.current = i; setOpen(i) }} aria-label={`Open photo: ${g.caption}`}>
+              <img src={`${import.meta.env.BASE_URL}${g.src}`} alt={g.alt} loading="lazy" />
+              <span className="g-cap"><b>{g.caption}</b>{g.credit && <small>{g.credit}</small>}</span>
+            </button>
+          </Reveal>
+        ))}
+        {import.meta.env.DEV && (
+          <li className="g-todo">TODO (dev only): add your own photography / videography in <code>gallery</code> in src/data/site.ts</li>
+        )}
+      </ul>
+      <AnimatePresence>
+        {it && (
+          <motion.div className="lightbox" role="dialog" aria-modal="true" aria-label={it.caption} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={close}>
+            <motion.figure key={it.src} initial={{ scale: 0.94, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.3, ease: EASE }} onClick={(e) => e.stopPropagation()}>
+              <img src={`${import.meta.env.BASE_URL}${it.src}`} alt={it.alt} />
+              <figcaption><b>{it.caption}</b>{it.credit && <span>{it.credit}</span>}</figcaption>
+            </motion.figure>
+            <button type="button" className="lb-btn lb-close" onClick={close} aria-label="Close" autoFocus>✕</button>
+            <button type="button" className="lb-btn lb-prev" onClick={(e) => { e.stopPropagation(); step(-1) }} aria-label="Previous photo">‹</button>
+            <button type="button" className="lb-btn lb-next" onClick={(e) => { e.stopPropagation(); step(1) }} aria-label="Next photo">›</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 /* ---------------- Beyond code ---------------- */
 export function Beyond() {
   const ref = useRef<HTMLElement>(null)
@@ -542,6 +615,7 @@ export function Beyond() {
           ))}
         </ul>
       </div>
+      <Gallery />
     </section>
   )
 }
@@ -558,7 +632,7 @@ const HIRE_ROLES = [
     role: 'AI / ML',
     icon: '∇',
     brings: 'Models that ship — PyTorch, graph neural networks, NLP, XGBoost, honest evaluation and deployment.',
-    proof: '93.1% root-cause accuracy GNN · 80.6% multilingual classifier',
+    proof: '93.1% root-cause accuracy (synthetic benchmark) · 80.6% on real civic complaints',
   },
 ]
 

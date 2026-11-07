@@ -9,7 +9,7 @@ import { ArrowUpRight, Ext, Reveal, SectionHead } from './ui'
  */
 const USER = links.githubUser
 /** Repos to show first, in this order. Others fill remaining slots by recent activity. */
-const PINNED = ['GalliGraph', 'CardioGuard', 'BlackBox']
+const PINNED = ['GalliGraph', 'BlackBox', 'CardioGuard', 'Guildspace']
 const MAX_REPOS = 6
 
 type Repo = { name: string; description: string | null; html_url: string; stargazers_count: number; language: string | null; fork: boolean; pushed_at: string; size: number }
@@ -17,10 +17,29 @@ type User = { avatar_url: string; public_repos: number; followers: number; name:
 type Day = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }
 type Contrib = { total: Record<string, number>; contributions: Day[] }
 
+/** Shown if the GitHub API is unreachable or rate-limited, so the section never breaks. */
+const FALLBACK: Repo[] = [
+  { name: 'GalliGraph', language: 'TypeScript' },
+  { name: 'BlackBox', language: 'Python' },
+  { name: 'CardioGuard', language: 'JavaScript' },
+  { name: 'Guildspace', language: 'JavaScript' },
+].map((r) => ({ ...r, description: null, html_url: `https://github.com/${USER}/${r.name}`, stargazers_count: 0, fork: false, pushed_at: '', size: 1 }))
+
+function ago(iso: string) {
+  if (!iso) return ''
+  const d = (Date.now() - new Date(iso).getTime()) / 86400000
+  if (d < 1) return 'updated today'
+  if (d < 30) return `updated ${Math.round(d)}d ago`
+  if (d < 365) return `updated ${Math.round(d / 30)}mo ago`
+  return `updated ${Math.round(d / 365)}y ago`
+}
+
 async function cached<T>(key: string, url: string): Promise<T> {
   const hit = sessionStorage.getItem(key)
   if (hit) return JSON.parse(hit) as T
-  const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' } })
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), 8000)
+  const res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' }, signal: ctrl.signal }).finally(() => clearTimeout(timer))
   if (!res.ok) throw new Error(`${res.status}`)
   const data = (await res.json()) as T
   try { sessionStorage.setItem(key, JSON.stringify(data)) } catch { /* quota */ }
@@ -140,9 +159,10 @@ export default function GitHub() {
           </div>
         </Reveal>
 
-        <ul className="gh-repos">
-          {repos
-            ? repos.map((r, i) => (
+        {failed.repos && <p className="mono gh-note" role="status">Couldn’t reach GitHub just now — showing the saved list of featured repositories.</p>}
+        <ul className="gh-repos" aria-busy={!repos && !failed.repos}>
+          {(repos ?? (failed.repos ? FALLBACK : null))
+            ? (repos ?? FALLBACK).map((r, i) => (
                 <Reveal as="li" key={r.name} delay={i * 0.05}>
                   <Ext href={r.html_url} className="gh-repo" label={`${r.name} repository on GitHub`}>
                     <span className="gh-top">
@@ -154,20 +174,12 @@ export default function GitHub() {
                     <span className="m mono">
                       {r.language && <span className="lang"><i style={{ background: LANG_COLORS[r.language] ?? '#ff4f00' }} />{r.language}</span>}
                       {r.stargazers_count > 0 && <span>★ {r.stargazers_count}</span>}
+                      {r.pushed_at && <span>{ago(r.pushed_at)}</span>}
                     </span>
                   </Ext>
                 </Reveal>
               ))
-            : failed.repos
-              ? PINNED.map((n) => (
-                  <li key={n}>
-                    <Ext href={`${links.github}/${n}`} className="gh-repo">
-                      <span className="name">{n}<ArrowUpRight /></span>
-                      <span className="d">View repository on GitHub.</span>
-                    </Ext>
-                  </li>
-                ))
-              : Array.from({ length: 3 }, (_, i) => <li key={i} className="skeleton" style={{ height: 160 }} />)}
+            : Array.from({ length: 3 }, (_, i) => <li key={i} className="skeleton" style={{ height: 160 }} />)}
         </ul>
       </div>
     </section>

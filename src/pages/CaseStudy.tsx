@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Fragment, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { ArchDiagram } from '../components/Arch'
 import { CountUp } from '../components/Effects'
 import { ArrowLeft, ArrowUpRight, EASE, Ext, Magnetic, Reveal } from '../components/ui'
 import { getProject, projects, type FlowNode } from '../data/projects'
@@ -73,7 +74,14 @@ export default function CaseStudy() {
         </div>
       ),
     })
-  if (s.architecture) blocks.push({ title: 'Architecture', node: <Diagram label="System architecture" {...s.architecture} /> })
+  if (p.contribution) blocks.push({ title: 'My contribution', node: <ul className="cs-list">{p.contribution.map((t) => <li key={t}>{t}</li>)}</ul> })
+  if (s.architecture)
+    blocks.push({
+      title: 'Architecture',
+      node: s.architecture.nodes.some((n) => n.detail)
+        ? <ArchDiagram label="System architecture" {...s.architecture} />
+        : <Diagram label="System architecture" {...s.architecture} />,
+    })
   if (s.pipeline) blocks.push({ title: 'AI/ML pipeline', node: <Diagram label="AI/ML pipeline" {...s.pipeline} /> })
   if (s.gallery)
     blocks.push({
@@ -131,6 +139,26 @@ export default function CaseStudy() {
           </div>
           {s.resultsNote && <p className="mono" style={{ marginTop: '1rem', textTransform: 'none' }}>{s.resultsNote}</p>}
         </>
+      ),
+    })
+  if (p.evaluation)
+    blocks.push({
+      title: 'Evaluation & limits',
+      node: (
+        <dl className="cs-eval">
+          <div><dt className="mono">Data</dt><dd>{p.evaluation.dataset}</dd></div>
+          <div><dt className="mono">Method</dt><dd>{p.evaluation.method}</dd></div>
+          <div><dt className="mono">Limitations</dt><dd><ul className="cs-list">{p.evaluation.limitations.map((l) => <li key={l}>{l}</li>)}</ul></dd></div>
+        </dl>
+      ),
+    })
+  if (p.docs)
+    blocks.push({
+      title: 'Documentation',
+      node: (
+        <ul className="cs-docs">
+          {p.docs.map((d) => <li key={d.href}><Ext href={d.href} className="btn">{d.label} <ArrowUpRight /></Ext></li>)}
+        </ul>
       ),
     })
 

@@ -4,7 +4,7 @@
  * Sections left undefined are simply not rendered on the case-study page.
  */
 
-export type FlowNode = { label: string; sub?: string }
+export type FlowNode = { label: string; sub?: string; /** Shown when the node is selected in an interactive diagram. */ detail?: string }
 export type Metric = { value: string; label: string; how?: string }
 export type Shot = { src: string; caption: string; wide?: boolean }
 
@@ -31,6 +31,12 @@ export type Project = {
   /** Older / smaller work: listed compactly, not in the main showcase. */
   archive?: boolean
   stats?: Metric[]
+  /** What Tanishq personally built (from his resume). Leave undefined if unknown — never guess. */
+  contribution?: string[]
+  /** How results were measured: dataset, method and honest limitations. */
+  evaluation?: { dataset: string; method: string; limitations: string[] }
+  /** Repository docs worth linking: README, architecture, model card, results. */
+  docs?: { label: string; href: string }[]
   study: {
     problem?: string[]
     solution?: string[]
@@ -66,9 +72,31 @@ export const projects: Project[] = [
     live: 'https://galligraph.onrender.com',
     image: 'img/galligraph.webp',
     stats: [
-      { value: '80.6%', label: 'Accuracy on unseen real complaints' },
-      { value: '56%', label: 'Fewer tickets after de-duplication' },
-      { value: '~15 ms', label: 'Per complaint, CPU only' },
+      { value: '80.6%', label: 'Category accuracy, trained model', how: '1,548 unseen real 2022 complaints' },
+      { value: '96.4%', label: 'Duplicate-merge precision', how: 'synthetic multilingual set' },
+      { value: '~15 ms', label: 'Triage per complaint', how: 'laptop CPU, no GPU' },
+    ],
+    contribution: [
+      'Led Team Codestorm (2 members) from problem statement to deployed product in the OFFGRID hackathon.',
+      'Trained the TF-IDF (word + character n-gram) + logistic-regression classifier on 14,491 real complaints and evaluated it on a time split.',
+      'Engineered geo-temporal duplicate detection, explainable priority scoring, SLA escalation and Poisson-based spike detection.',
+      'Shipped citizen and officer portals with role-based access, scrypt password hashing, signed sessions and rate limiting; containerised with Docker and deployed on Render.',
+    ],
+    evaluation: {
+      dataset: 'Real municipal complaints (trained on 2019–21, tested on 1,548 unseen 2022 complaints) plus two synthetic multilingual sets (661 and 788 complaints) with typos and vague landmarks.',
+      method: 'Time-based split so the model never sees the future. Duplicate detection scored on labelled synthetic pairs, with a held-out second dataset. All numbers reproducible with the scripts in the repository.',
+      limitations: [
+        'The full system (model + multilingual rules) scores 78.0% on real data — it trades ~3 points on English to stay accurate on Hindi/Hinglish, which the model never saw.',
+        'Citizen-chosen labels are sometimes wrong, which caps achievable accuracy.',
+        'Hindi/Hinglish and duplicate metrics come from synthetic data; the 56% ticket reduction is on the simulated demo city, not a live deployment.',
+        'Not yet piloted with a municipality (MUJ campus and Jaipur ward pilots are on the roadmap).',
+      ],
+    },
+    docs: [
+      { label: 'README', href: 'https://github.com/Tanishqtiwari1/GalliGraph#readme' },
+      { label: 'Architecture', href: 'https://github.com/Tanishqtiwari1/GalliGraph#architecture' },
+      { label: 'How the AI works', href: 'https://github.com/Tanishqtiwari1/GalliGraph#how-the-ai-works' },
+      { label: 'Measured results', href: 'https://github.com/Tanishqtiwari1/GalliGraph#measured-results' },
     ],
     study: {
       problem: [
@@ -88,11 +116,12 @@ export const projects: Project[] = [
       architecture: {
         caption: 'One Docker container: React portals → FastAPI → triage pipeline → SQLite audit timeline.',
         nodes: [
-          { label: 'Citizens & officers', sub: 'web · WhatsApp · voice' },
-          { label: 'React + TypeScript', sub: 'two portals' },
-          { label: 'FastAPI', sub: 'auth · roles · rate limits' },
-          { label: 'Triage pipeline', sub: 'classify · dedupe · rank' },
-          { label: 'SQLite', sub: 'records + audit trail' },
+          { label: 'Citizens & officers', sub: 'web · WhatsApp · voice', detail: 'Complaints arrive as text, Hindi voice notes, photos or map pins through the web portal or the WhatsApp bot. Ward officers and supervisors work in their own portal.' },
+          { label: 'React + TypeScript', sub: 'two portals', detail: 'Citizen and officer portals over one record: report, track, review queue, assignment, work orders and verified closure — with a Hindi UI and dark mode.' },
+          { label: 'FastAPI', sub: 'auth · roles · rate limits', detail: 'REST API with role-based access, scrypt password hashing, signed sessions and rate limiting; Twilio WhatsApp webhooks with signature verification.' },
+          { label: 'Triage pipeline', sub: 'classify · dedupe · rank', detail: 'Detect language → classify (TF-IDF + logistic regression with multilingual keyword rules) → geocode → spot fingerprint → embed → merge duplicates → explainable 0–100 priority → route with an SLA. Every AI step has a deterministic fallback, so it keeps working offline.' },
+          { label: 'SQLite', sub: 'records + audit trail', detail: 'The single record of every complaint and issue, with an audit timeline: each AI suggestion and every officer override is logged. No issue is ever closed by AI alone.' },
+          { label: 'Optional services', sub: 'OSM · LLM · SMS', detail: 'OpenStreetMap Nominatim for geocoding, an optional local LLM (Ollama) or Claude for extraction, and Twilio SMS — all optional, each with a fallback.' },
         ],
       },
       pipeline: {
@@ -129,13 +158,14 @@ export const projects: Project[] = [
         'Leading a two-person team under a hackathon clock means ruthless scoping.',
       ],
       results: [
-        { value: '80.6%', label: 'Accuracy on 1,548 unseen 2022 complaints', how: 'vs 69.6% for keyword rules (+11 pts)' },
-        { value: '97%', label: 'On a synthetic Hindi/Hinglish test set' },
-        { value: '96.4%', label: 'Duplicate-merge precision', how: 'F1 0.90' },
-        { value: '56%', label: 'Ticket reduction', how: '665 complaints → 292 real issues' },
-        { value: '~15 ms', label: 'Per complaint on CPU' },
+        { value: '80.6%', label: 'Category accuracy of the trained model', how: '1,548 unseen real 2022 complaints, time split · keyword rules: 69.6% · full system: 78.0%' },
+        { value: '97%', label: 'Category accuracy, Hindi/Hinglish', how: 'synthetic multilingual set (661 complaints) · held-out set: 96.7%' },
+        { value: '96.4%', label: 'Duplicate-merge precision', how: 'synthetic set A · F1 0.903 (A), 0.866 (held-out B)' },
+        { value: '8.4%', label: 'Real duplicates found', how: '4,000 real complaints replayed with real GPS + timestamps' },
+        { value: '56%', label: 'Ticket reduction', how: 'simulated demo city: 665 complaints → 292 issues' },
+        { value: '~15 ms', label: 'Triage latency per complaint', how: 'laptop CPU, no GPU, no paid API' },
       ],
-      resultsNote: 'All numbers are reproducible with the scripts in the repository.',
+      resultsNote: 'Experimental results from the repository’s evaluation scripts — not production performance.',
     },
   },
   {
@@ -154,10 +184,29 @@ export const projects: Project[] = [
     live: 'https://blackbox-flight-recorder.onrender.com',
     image: 'img/blackbox.webp',
     stats: [
-      { value: '93.1%', label: 'Top-1 root-cause accuracy', how: 'GNN vs 65.7% rule-based baseline' },
-      { value: '88.4%', label: 'On unseen fault types' },
-      { value: '34%', label: 'Steps re-executed on replay' },
-      { value: '98.1%', label: 'Failures fixed within 3 replays' },
+      { value: '93.1%', label: 'Top-1 root-cause accuracy', how: 'synthetic benchmark · rule baseline 65.7%' },
+      { value: '88.4%', label: 'On unseen fault types', how: 'synthetic benchmark' },
+      { value: '34%', label: 'Steps re-executed per replay', how: 'average' },
+    ],
+    contribution: [
+      'Built the debugging platform end to end: OpenTelemetry trace ingestion, root-cause localisation, checkpointed replay and fix verification.',
+      'Designed a PyTorch graph neural network with directional message passing over trace graphs.',
+      'Implemented event-sourced replay that re-executes only the steps affected by a fix; covered by 29 Pytest tests and deployed live.',
+    ],
+    evaluation: {
+      dataset: '5,000 generated runs of a travel-expense agent, one labelled fault injected per failing run; 6 training and 3 held-out fault types.',
+      method: 'Evaluation runs never used for training; splits for unseen fault types, a moved error source and new agent behaviour. Compared against gradient boosting, a first-suspicious-step rule, Personalized PageRank and random.',
+      limitations: [
+        'Synthetic benchmark: on a completely different agent the true cause was ranked first in 9 of 18 failures, improving as Black Box builds that agent’s history.',
+        'If an agent skips a step entirely, nothing anomalous is recorded at the cause.',
+        'Replay needs an adapter: the built-in agent is fully replayable; uploaded and OTLP traces are diagnosis-only.',
+      ],
+    },
+    docs: [
+      { label: 'README', href: 'https://github.com/Tanishqtiwari1/BlackBox#readme' },
+      { label: 'Architecture', href: 'https://github.com/Tanishqtiwari1/BlackBox#%EF%B8%8F-architecture' },
+      { label: 'Results', href: 'https://github.com/Tanishqtiwari1/BlackBox#-results' },
+      { label: 'Honest scope', href: 'https://github.com/Tanishqtiwari1/BlackBox#%EF%B8%8F-honest-scope' },
     ],
     study: {
       problem: [
@@ -187,12 +236,12 @@ export const projects: Project[] = [
       architecture: {
         caption: 'Live demo agent runs on Groq (gpt-oss-20b) or locally on Ollama (qwen2.5:7b).',
         nodes: [
-          { label: 'AI agent', sub: 'Groq / Ollama' },
-          { label: 'OpenTelemetry', sub: 'GenAI spans' },
-          { label: 'FastAPI', sub: 'ingestion API' },
-          { label: 'Trace graph', sub: 'steps + edges' },
-          { label: 'GNN', sub: 'PyTorch' },
-          { label: 'Replay engine', sub: 'event-sourced' },
+          { label: 'AI agent', sub: 'Groq / Ollama', detail: 'A tool-calling agent loop driven by Groq (gpt-oss-20b), a local Ollama model (qwen2.5:7b), or scripted policies for the benchmark.' },
+          { label: 'OpenTelemetry', sub: 'GenAI spans', detail: 'Agents emit spans using the GenAI semantic conventions; OTLP/HTTP JSON ingestion turns each run into a step graph, so any instrumented agent can plug in.' },
+          { label: 'FastAPI', sub: 'ingestion API', detail: 'REST endpoints and the static web app. A service layer is the only thing the API calls, and keeps per-agent baselines for external agents.' },
+          { label: 'Trace graph', sub: 'steps + edges', detail: 'An append-only SQLite log of arguments, outputs, timing, errors and data-flow parents. Trace-only signals: grounding, per-tool baselines, retrieval checks and lineage.' },
+          { label: 'GNN', sub: 'PyTorch', detail: 'A graph neural network with directional message passing ranks every step as a root-cause candidate (trained in PyTorch, NumPy inference). Occlusion-based evidence explains which signal drives the score.' },
+          { label: 'Replay engine', sub: 'event-sourced', detail: 'Restores the checkpoint before the root cause, patches the step (re-run, new output or new arguments), re-plans dynamically and shows an aligned diff of the original vs repaired run.' },
         ],
       },
       gallery: [
@@ -215,12 +264,13 @@ export const projects: Project[] = [
         'Observability standards (OpenTelemetry) make a tool plug into real agents instead of a toy demo.',
       ],
       results: [
-        { value: '93.1%', label: 'Top-1 root-cause accuracy', how: 'vs 65.7% for a rule-based baseline, on 5,000 generated runs with injected faults' },
-        { value: '88.4%', label: 'Accuracy on unseen fault types' },
-        { value: '34%', label: 'Of steps re-executed during replay' },
-        { value: '90.9%', label: 'Failures fixed by repairing the top-ranked step', how: '98.1% within 3 replays' },
+        { value: '93.1%', label: 'Top-1 root-cause accuracy', how: 'synthetic benchmark of 5,000 runs · gradient boosting 89.6% · rule baseline 65.7%' },
+        { value: '88.4%', label: 'Top-1 accuracy on unseen fault types', how: 'held-out fault types, synthetic benchmark' },
+        { value: '34%', label: 'Steps re-executed per replay', how: 'average; 66% of steps reused from checkpoints' },
+        { value: '90.9%', label: 'Failures fixed by repairing the #1 suspect', how: '98.1% within 3 replays, synthetic benchmark' },
         { value: '29', label: 'Pytest tests' },
       ],
+      resultsNote: 'Experimental results on a synthetic benchmark (data/metrics.json in the repository) — not production performance.',
     },
   },
   {
@@ -238,9 +288,27 @@ export const projects: Project[] = [
     live: 'https://tanishqtiwari1.github.io/CardioGuard/',
     image: 'img/cardioguard.webp',
     stats: [
-      { value: '82.1%', label: 'Accuracy, held-out test set' },
-      { value: '0.915', label: 'ROC-AUC' },
-      { value: '83.9%', label: 'F1 score' },
+      { value: '82.1%', label: 'Accuracy', how: 'held-out test set, 184 patients' },
+      { value: '0.915', label: 'ROC-AUC', how: 'same held-out set' },
+      { value: '83.9%', label: 'F1 score', how: 'same held-out set' },
+    ],
+    contribution: [
+      'Trained and tuned the XGBoost classifier (grid search) on 918 real patients from the UCI Heart Disease database.',
+      'Found data leakage in a popular Kaggle dataset (duplicate rows inflated accuracy to 97%) and rebuilt the preprocessing on clean data.',
+      'Built the offline-first PWA for ASHA health workers: in-browser Framingham model, Hindi/English UI, lab-report OCR and PDF reports; automated deployment with GitHub Actions.',
+    ],
+    evaluation: {
+      dataset: 'UCI Heart Disease database — 918 real patients from four hospitals (target: >50% narrowing on angiography). Framingham Heart Study teaching dataset (4,240 adults) for the no-blood-test home screening model.',
+      method: 'Held-out test set of 184 patients the model never saw; 5-fold CV accuracy on training data 81.2% ± 3.5%. Framingham model: test ROC-AUC 0.705, 5-fold CV 0.732 ± 0.033.',
+      limitations: [
+        'A screening estimate, not a diagnosis.',
+        'Everyone in the UCI data was referred for angiography, so symptom-free patients there had a high disease rate — the model can over-score symptom-free people.',
+        'Framingham participants were mostly white Americans; risk may be underestimated for South Asians (the app warns about this).',
+      ],
+    },
+    docs: [
+      { label: 'README', href: 'https://github.com/Tanishqtiwari1/CardioGuard#readme' },
+      { label: 'Model card', href: 'https://github.com/Tanishqtiwari1/CardioGuard/blob/main/MODEL_CARD.md' },
     ],
     study: {
       problem: [
@@ -281,11 +349,12 @@ export const projects: Project[] = [
         'In healthcare, a model people can understand beats a slightly better black box.',
       ],
       results: [
-        { value: '82.1%', label: 'Accuracy on held-out test set' },
-        { value: '83.9%', label: 'F1 score' },
-        { value: '0.915', label: 'ROC-AUC' },
-        { value: '0.73', label: 'CV ROC-AUC of the offline Framingham model', how: '4,240 adults' },
+        { value: '82.1%', label: 'Accuracy', how: 'held-out test set of 184 patients · CV 81.2% ± 3.5%' },
+        { value: '83.9%', label: 'F1 score', how: 'same held-out set' },
+        { value: '0.915', label: 'ROC-AUC', how: 'same held-out set' },
+        { value: '0.73', label: 'CV ROC-AUC, offline Framingham model', how: '5-fold CV on 4,240 adults · test ROC-AUC 0.705' },
       ],
+      resultsNote: 'Experimental results on public research datasets — not clinical validation.',
     },
   },
   {
@@ -302,6 +371,11 @@ export const projects: Project[] = [
     github: 'https://github.com/Tanishqtiwari1/Guildspace',
     live: 'https://tanishqtiwari1.github.io/Guildspace/',
     image: 'img/guildspace.webp',
+    // TODO(Tanishq): add `contribution` — what you personally built in Guildspace (it isn't on your resume, so it's left out rather than guessed).
+    docs: [
+      { label: 'README', href: 'https://github.com/Tanishqtiwari1/Guildspace#readme' },
+      { label: 'Faculty & academics module', href: 'https://github.com/Tanishqtiwari1/Guildspace#faculty--academic-module' },
+    ],
     study: {
       problem: [
         'Students have skills worth sharing and gaps they want to fill, but finding a compatible peer mentor — with matching skills, free time and trust — is left to chance. Faculty updates are scattered across groups and notice boards.',

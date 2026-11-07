@@ -47,7 +47,7 @@ export const nav = [
 export const about = {
   paragraphs: [
     'I build AI systems that ship — models wrapped in real APIs and interfaces that people can actually use.',
-    'Recent work: a graph neural network that pinpoints why LLM agents fail (93.1% top-1 root-cause accuracy), a multilingual NLP platform that triages civic complaints in English, Hindi and Hinglish, an offline-first heart-risk screening app for community health workers, and a skill-exchange platform for students.',
+    'Recent work: a graph neural network that pinpoints why LLM agents fail (93.1% top-1 root-cause accuracy on a synthetic benchmark), a multilingual NLP platform that triages civic complaints in English, Hindi and Hinglish, an offline-first heart-risk screening app for community health workers, and a skill-exchange platform for students.',
     "I study Computer Science (AI & ML) at Manipal University Jaipur, completed IIT Mandi's in-campus AI & ML program, and led Team Codestorm to 2nd place at the OFFGRID Hackathon. I'm targeting Software Engineering and AI/ML internships.",
   ],
   currently: [
@@ -63,7 +63,7 @@ export const highlights: { big: string; unit: string; title: string; meta: strin
   { big: '2nd', unit: 'Place', title: 'OFFGRID Hackathon', meta: 'TechIdeate 2026 · IEEE SB MUJ · Team lead', img: 'img/offgrid-award.webp', href: '/work/galligraph' },
   { big: 'AI/ML', unit: 'Intern', title: 'HCLTech', meta: 'Dec 2026 – Jan 2027' },
   { big: 'IIT', unit: 'Mandi', title: 'AI & ML In-Campus Program', meta: 'Himshikhar 2026 · May – Jul 2026', img: 'img/iit-mandi-focus.webp' },
-  { big: '93.1%', unit: '', title: 'Root-cause accuracy', meta: 'Black Box GNN vs 65.7% baseline', img: 'img/blackbox.webp', href: '/work/blackbox' },
+  { big: '93.1%', unit: '', title: 'Root-cause accuracy', meta: 'Black Box GNN · synthetic benchmark · rule baseline 65.7%', img: 'img/blackbox.webp', href: '/work/blackbox' },
 ]
 
 export type TimelineEntry = {
@@ -73,6 +73,8 @@ export type TimelineEntry = {
   /** ISO-ish start date, used to show an "Upcoming" badge automatically. */
   start: string
   kind: 'Work' | 'Award' | 'Community' | 'Learning' | 'Hackathon'
+  /** Which experience group the entry belongs to (rendered as separate sub-sections). */
+  group: 'Internships' | 'Academic programs' | 'Hackathons' | 'Community'
   meta?: string
   details: string[]
   tags: string[]
@@ -87,7 +89,9 @@ export const timeline: TimelineEntry[] = [
     period: 'Dec 2026 – Jan 2027',
     start: '2026-12-01',
     kind: 'Work',
-    details: ['AI/ML internship at HCLTech. Responsibilities and outcomes will be added here once the internship is underway.'],
+    group: 'Internships',
+    // TODO(Tanishq): add responsibilities and outcomes once the internship has started — never fill these in before they're real.
+    details: ['Upcoming AI/ML internship at HCLTech, starting December 2026. Responsibilities and outcomes will be added once the internship is underway.'],
     tags: ['AI/ML', 'Internship'],
   },
   {
@@ -96,6 +100,7 @@ export const timeline: TimelineEntry[] = [
     period: 'May 2026 – Jul 2026',
     start: '2026-05-01',
     kind: 'Learning',
+    group: 'Academic programs',
     meta: 'Himshikhar 2026 · Summer Residential Program',
     image: { src: 'img/iit-mandi-focus.webp', alt: 'Tanishq Tewari holding his Himshikhar 2026 certificate of completion in front of the IIT Mandi administrative building' },
     details: [
@@ -110,6 +115,7 @@ export const timeline: TimelineEntry[] = [
     period: 'Oct 2026',
     start: '2026-10-01',
     kind: 'Hackathon',
+    group: 'Hackathons',
     meta: 'GDG on Campus',
     details: [
       'Built Black Box — a flight recorder and debugger for AI agents that finds the root cause of a failed run with a graph neural network and replays from that step to verify the fix.',
@@ -122,6 +128,7 @@ export const timeline: TimelineEntry[] = [
     period: 'Oct 2026',
     start: '2026-10-01',
     kind: 'Award',
+    group: 'Hackathons',
     meta: 'IEEE Student Branch MUJ · Techideate 2026',
     details: [
       'Led Team Codestorm to 2nd Position and a ₹15,000 prize.',
@@ -136,6 +143,7 @@ export const timeline: TimelineEntry[] = [
     period: 'MUJ',
     start: '',
     kind: 'Community',
+    group: 'Community',
     meta: 'Digital Arts Society · Manipal University Jaipur',
     details: ["Part of the working team at Aperture, MUJ's digital arts society — photography, videography and visual storytelling."],
     tags: ['Photography', 'Videography', 'Creative'],
@@ -216,3 +224,16 @@ export const featuredPost = {
   quote: 'Celebrating innovation, creativity, and excellence!',
   note: 'The official TechIdeate account at Manipal University Jaipur featured the OFFGRID winners. The post opens on slide 5 — that’s Team Codestorm receiving 2nd Position.',
 }
+
+/**
+ * Beyond-code gallery. Only real photos with honest credits.
+ * TODO(Tanishq): add your own photography / videography here — e.g.
+ *   { src: 'img/gallery/my-shot.webp', alt: '…', caption: '…', credit: 'Photo: Tanishq Tewari', kind: 'photo' }
+ * Until then, placeholder tiles appear only in local development (never on the live site).
+ */
+export const gallery: { src: string; alt: string; caption: string; credit?: string; kind: 'photo' | 'video'; wide?: boolean }[] = [
+  { src: 'img/offgrid-award.webp', alt: 'Team Codestorm receiving the OFFGRID 2nd Position award on stage at TechIdeate 2026', caption: 'OFFGRID 2nd Position — TechIdeate 2026, MUJ', credit: 'Photo: Aperture, Digital Arts Society', kind: 'photo', wide: true },
+  { src: 'img/iit-mandi-focus.webp', alt: 'Tanishq holding his Himshikhar 2026 certificate at IIT Mandi', caption: 'Himshikhar 2026 — IIT Mandi', kind: 'photo' },
+  { src: 'img/ig/slide-1.webp', alt: 'TechIdeate 2026 award ceremony on stage at Manipal University Jaipur', caption: 'TechIdeate 2026 award ceremony', credit: 'Photo: Aperture · via @muj.techideate', kind: 'photo' },
+  { src: 'img/ig/slide-3.webp', alt: 'Winners and organisers on stage at TechIdeate 2026', caption: 'TechIdeate 2026, MUJ', credit: 'Photo: Aperture · via @muj.techideate', kind: 'photo' },
+]
