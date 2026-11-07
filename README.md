@@ -24,6 +24,7 @@ CI runs lint and tests before every deploy; a failure blocks the release.
 
 ## Editing content
 - `src/data/site.ts` — profile, links, timeline (grouped), skills, highlights, hackathons, **Now**, Beyond Code, gallery
+- `src/components/Cursor.tsx` — morphing cursor (snap / stretch / lens / labels); edit the `SNAP`, `LABELS`, `LENS` selector lists to change behaviour. Mouse/trackpad only, off with reduced motion.
 - `src/lib/terminal.ts` — the optional terminal's commands (open with the `›_` button or the backtick key)
 - `src/data/projects.ts` — projects + case studies: contribution, evaluation (data, method, limitations), docs links, architecture (nodes with `detail` become interactive)
 - `public/Tanishq_Tewari_Resume.pdf` — resume served by the Resume buttons

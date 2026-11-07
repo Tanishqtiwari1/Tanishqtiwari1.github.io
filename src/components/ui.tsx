@@ -181,7 +181,7 @@ export function FitText({ text, className, ratio = 1, delay = 0, maxVh, hover = 
               initial={{ y: '102%' }}
               whileInView={{ y: 0 }}
               viewport={{ once: true }}
-              whileHover={hover ? { y: '-14%', color: 'var(--accent)', transition: { type: 'spring', stiffness: 500, damping: 12 } } : undefined}
+              whileHover={hover ? { y: '-14%', transition: { type: 'spring', stiffness: 500, damping: 12 } } : undefined}
               transition={{ duration: 0.9, ease: EASE, delay: delay + i * 0.035 }}
             >
               {c === ' ' ? ' ' : c}

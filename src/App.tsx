@@ -2,6 +2,7 @@ import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { lazy, Suspense, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { BackToTop, ScrollProgress, Spotlight } from './components/Effects'
+import Cursor from './components/Cursor'
 import Nav from './components/Nav'
 import Terminal from './components/Terminal'
 import { Footer } from './components/Sections'
@@ -49,6 +50,7 @@ export default function App() {
       <Spotlight />
       <BackToTop />
       <Terminal />
+      <Cursor />
       <Nav />
       <main id="main">
         <AnimatePresence mode="wait" initial={false}>

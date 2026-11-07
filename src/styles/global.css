@@ -1259,3 +1259,32 @@ ul, ol { list-style: none; }
   .bar-left { gap: 0.6rem; }
   .term-btn { width: 40px; height: 40px; }
 }
+
+/* =====================================================================
+   Morphing cursor (fine pointers only; see components/Cursor.tsx)
+   ===================================================================== */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+html.has-cursor input, html.has-cursor textarea, html.has-cursor select { cursor: text !important; }
+.cursor-ring, .cursor-dot { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 0.25s; will-change: transform; }
+.cursor-ring.on, .cursor-dot.on { opacity: 1; }
+.cursor-dot { width: 6px; height: 6px; border-radius: 50%; background: #ff4f00; transition: opacity 0.25s, background 0.25s; }
+.cursor-ring {
+  width: 34px; height: 34px; border-radius: 17px;
+  border: 1.5px solid #fff; mix-blend-mode: difference;
+  display: grid; place-items: center;
+  transition: opacity 0.25s, background-color 0.3s, border-color 0.3s;
+}
+.cursor-label { font-family: var(--mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #0c0c0c; opacity: 0; transform: scale(0.6); transition: opacity 0.2s, transform 0.3s var(--ease); white-space: nowrap; }
+/* snap: wraps the control, tinted with the accent */
+.cursor-ring[data-mode='snap'] { mix-blend-mode: normal; border-color: #ff4f00; background-color: rgba(255, 79, 0, 0.1); }
+/* label: filled disc with an action word */
+.cursor-ring[data-mode='label'] { mix-blend-mode: normal; border-color: #ff4f00; background-color: #ff4f00; box-shadow: 0 10px 30px -10px rgba(255, 79, 0, 0.6); }
+.cursor-ring[data-mode='label'] .cursor-label { opacity: 1; transform: scale(1); }
+/* lens: inverts the giant type underneath */
+.cursor-ring[data-mode='lens'] { background-color: #fff; border-color: #fff; }
+html:has(.cursor-ring[data-mode='snap']) .cursor-dot,
+html:has(.cursor-ring[data-mode='label']) .cursor-dot,
+html:has(.cursor-ring[data-mode='lens']) .cursor-dot { opacity: 0; }
+.cursor-ripple { position: fixed; z-index: 9998; pointer-events: none; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; border: 1.5px solid #ff4f00; animation: cursor-ripple 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+@keyframes cursor-ripple { to { transform: scale(4.5); opacity: 0; } }
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) { .cursor-ring, .cursor-dot, .cursor-ripple { display: none; } }
