@@ -19,6 +19,4 @@ npm run build    # outputs dist/ (+ robots.txt, sitemap.xml, 404.html)
 **Live:** https://tanishqtiwari1.github.io — every push to `main` rebuilds and redeploys via `.github/workflows/deploy.yml`.
 
 Set `SITE_URL` (e.g. `https://yourdomain.com`) in the host's environment so canonical/OG URLs, robots.txt and sitemap.xml are correct.
-- **Vercel**: import repo → framework Vite. `vercel.json` handles SPA routes.
-- **Netlify**: build `npm run build`, publish `dist`. `public/_redirects` handles SPA routes.
-- **GitHub Pages** (project page): build with `BASE_PATH=/<repo>/`; `404.html` is generated for SPA routes.
+- **GitHub Pages**: `.github/workflows/deploy.yml` builds and deploys on every push to `main` (Settings → Pages → Source: GitHub Actions). The build also writes `404.html` plus a prerendered `work/<slug>/index.html` per case study, so deep links return 200.

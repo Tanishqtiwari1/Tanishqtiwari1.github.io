@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTrans
 import { Fragment, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { about, beyond, featuredPost, hackathons, highlights, links, now, profile, stack, timeline } from '../data/site'
-import { CountUp, Marquee, Scramble, ScrollWords, SpinBadge, Tilt } from './Effects'
+import { CountUp, ScrollWords, SpinBadge, Tilt } from './Effects'
 import { ArrowUpRight, EASE, Ext, FitText, Magnetic, Plus, Reveal, SectionHead, SplitText } from './ui'
 
 /* ---------------- About ---------------- */
@@ -104,7 +104,7 @@ export function Experience() {
   return (
     <section id="experience" className="section" aria-labelledby="exp-title">
       <div className="container">
-        <SectionHead id="exp-title" kicker="02 — Chronology" title="Experience" sub="the timeline" aside="Hover for photos · click to expand" />
+        <SectionHead id="exp-title" kicker="03 — Experience" title="Experience" sub="the timeline" aside="Hover for photos · click to expand" />
         <ol className="timeline" ref={listRef} onPointerMove={onMove} onPointerLeave={() => setHover(null)}>
           <HoverPreview src={preview?.src ?? null} alt="" x={mx} y={my} />
           {timeline.map((t, i) => {
@@ -119,7 +119,6 @@ export function Experience() {
                   aria-controls={panelId}
                   onClick={() => setOpen(isOpen ? null : i)}
                   onPointerEnter={() => setHover(i)}
-                  data-cursor={t.image && !isOpen ? 'Photo' : undefined}
                 >
                   <span className="tl-date mono">{t.period}</span>
                   <span>
@@ -190,74 +189,27 @@ export function Experience() {
   )
 }
 
-/* ---------------- Stack ---------------- */
+/* ---------------- Skills: every category visible at once ---------------- */
 export function Stack() {
-  const [i, setI] = useState(0)
-  const g = stack[i]
-  const onKey = (e: React.KeyboardEvent) => {
-    const dir = ['ArrowDown', 'ArrowRight'].includes(e.key) ? 1 : ['ArrowUp', 'ArrowLeft'].includes(e.key) ? -1 : 0
-    if (!dir) return
-    e.preventDefault()
-    const next = (i + dir + stack.length) % stack.length
-    setI(next)
-    document.getElementById(`stack-tab-${next}`)?.focus()
-  }
   return (
     <section id="stack" className="section" aria-labelledby="stack-title">
       <div className="container">
-        <SectionHead id="stack-title" kicker="04 — Toolkit" title="Stack" sub="what I build with" aside="Organised by what it's for" />
-        <div className="stack-grid">
-          <div className="stack-tabs" role="tablist" aria-label="Technology categories" aria-orientation="vertical" onKeyDown={onKey}>
-            {stack.map((s, idx) => (
-              <button
-                key={s.group}
-                id={`stack-tab-${idx}`}
-                role="tab"
-                className="stack-tab"
-                aria-selected={idx === i}
-                aria-controls="stack-panel"
-                tabIndex={idx === i ? 0 : -1}
-                onClick={() => setI(idx)}
-                onMouseEnter={() => window.matchMedia('(hover: hover)').matches && setI(idx)}
-              >
-                {idx === i && <motion.span layoutId="stack-bar" className="bar" />}
-                <span className="name">{s.group}</span>
-                <span className="mono">{String(s.items.length).padStart(2, '0')}</span>
-              </button>
-            ))}
-          </div>
-
-          <div id="stack-panel" role="tabpanel" aria-labelledby={`stack-tab-${i}`} className="stack-panel">
-            <AnimatePresence mode="wait">
-              <motion.div key={g.group} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.2 } }}>
-                <div className="stack-panel-head">
-                  <p className="note mono">{g.note}</p>
-                  <span className="stack-count"><CountUp value={String(g.items.length)} /> <span className="mono">tools</span></span>
-                </div>
-                <ul className="stack-items">
-                  {g.items.map((it, k) => (
-                    <motion.li
-                      className="stack-item spot"
-                      key={it}
-                      initial={{ opacity: 0, rotateX: -80, y: 24 }}
-                      animate={{ opacity: 1, rotateX: 0, y: 0 }}
-                      transition={{ duration: 0.55, ease: EASE, delay: k * 0.045 }}
-                      style={{ transformPerspective: 700, transformOrigin: '50% 0%' }}
-                      whileHover={{ y: -6, rotate: k % 2 ? 1.5 : -1.5 }}
-                    >
-                      <span className="mono">{String(k + 1).padStart(2, '0')}</span>
-                      <Scramble className="n" text={it} trigger="hover" />
-                    </motion.li>
-                  ))}
-                </ul>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-      <div className="stack-marquees" aria-hidden="true">
-        <Marquee className="mq-skill" speed={2} items={stack.slice(0, 3).flatMap((x) => x.items)} />
-        <Marquee className="mq-skill mq-outline" speed={2} reverse items={stack.slice(3).flatMap((x) => x.items)} />
+        <SectionHead id="stack-title" kicker="04 — Skills" title="Skills" sub="what I build with" aside="Only what I've used in shipped work" />
+        <ul className="skills">
+          {stack.map((g, gi) => (
+            <Reveal as="li" key={g.group} className="skill-card spot" delay={gi * 0.06}>
+              <div className="skill-head">
+                <span className="mono">{String(gi + 1).padStart(2, '0')}</span>
+                <h3>{g.group}</h3>
+                <span className="skill-count mono">{g.items.length}</span>
+              </div>
+              <p className="skill-note">{g.note}</p>
+              <ul className="skill-chips" aria-label={`${g.group} skills`}>
+                {g.items.map((it) => <li key={it}>{it}</li>)}
+              </ul>
+            </Reveal>
+          ))}
+        </ul>
       </div>
     </section>
   )
@@ -312,12 +264,12 @@ function InstaFeature() {
     <div className="ig">
       <Reveal className="ig-copy">
         <span className="ig-chip"><span className="ig-logo" aria-hidden="true" />Featured on Instagram</span>
-        <h4 className="ig-title"><Scramble text={p.title} /></h4>
+        <h4 className="ig-title">{p.title}</h4>
         <blockquote className="ig-quote">“{p.quote}”<cite>— @{p.account}</cite></blockquote>
         <p className="ig-note">{p.note}</p>
         <div className="ig-actions">
           <Magnetic>
-            <button className="btn btn-accent" onClick={() => go(p.mySlide - 1)} data-cursor="Me">
+            <button className="btn btn-accent" onClick={() => go(p.mySlide - 1)}>
               Show my slide <span aria-hidden="true">→</span>
             </button>
           </Magnetic>
@@ -343,7 +295,7 @@ function InstaFeature() {
             <span className="ig-follow" aria-hidden="true">View profile</span>
           </header>
 
-          <div className="ig-media" tabIndex={0} onKeyDown={onKey} onDoubleClick={like} data-cursor="Swipe" role="group" aria-roledescription="carousel" aria-label="Post photos">
+          <div className="ig-media" tabIndex={0} onKeyDown={onKey} onDoubleClick={like} role="group" aria-roledescription="carousel" aria-label="Post photos">
             <AnimatePresence initial={false} custom={dir}>
               <motion.img
                 key={idx}
@@ -432,7 +384,7 @@ export function Achievements() {
   return (
     <section id="achievements" className="section" aria-labelledby="ach-title">
       <div className="container">
-        <SectionHead id="ach-title" kicker="05 — Highlights" title="Achievements" sub="so far" aside="No inflated numbers. Just the record." />
+        <SectionHead id="ach-title" kicker="05 — Achievements" title="Achievements" sub="so far" aside="No inflated numbers. Just the record." />
         <ul className="highlights">
           {highlights.map((h, i) => {
             const body = (
@@ -458,9 +410,9 @@ export function Achievements() {
               <Reveal as="li" className={`hl ${h.img ? 'has-img' : ''}`} key={h.title} delay={i * 0.08}>
                 <Tilt className="hl-tilt" max={6}>
                   {h.href ? (
-                    <Link to={h.href} className="hl-inner" data-cursor="Open">{body}</Link>
+                    <Link to={h.href} className="hl-inner">{body}</Link>
                   ) : (
-                    <div className="hl-inner" data-cursor={h.img ? 'Look' : undefined}>{body}</div>
+                    <div className="hl-inner">{body}</div>
                   )}
                 </Tilt>
               </Reveal>
@@ -479,7 +431,7 @@ export function Achievements() {
             <Reveal className="hack-photo">
               <figure>
                 <motion.img
-                  src={`${import.meta.env.BASE_URL}img/offgrid-award.jpg`}
+                  src={`${import.meta.env.BASE_URL}img/offgrid-award.webp`}
                   alt="Tanishq Tewari and his team receiving the OFFGRID Hackathon 2nd Position award on stage at TechIdeate 2026, Manipal University Jaipur"
                   loading="lazy"
                   width={1800}
@@ -583,7 +535,7 @@ export function Beyond() {
               <div className={`bl-row ${active === i ? 'on' : ''}`} onMouseEnter={() => setActive(i)}>
                 <span className="mono">{String(i + 1).padStart(2, '0')}</span>
                 <span className="bl-icon" aria-hidden="true">{b.icon}</span>
-                <span className="t"><Scramble text={b.title} trigger="hover" /></span>
+                <span className="t">{b.title}</span>
                 <span className="n">{b.note}</span>
               </div>
             </Reveal>
@@ -628,7 +580,7 @@ export function Hire() {
           <Reveal className="hire-left">
             <p className="hire-pitch">{a.pitch}</p>
             <div className="hire-ctas">
-              <Magnetic><a href={`mailto:${links.email}?subject=${encodeURIComponent('Internship opportunity')}`} className="btn btn-accent hire-btn" data-cursor="Email">Email me about a role <ArrowUpRight /></a></Magnetic>
+              <Magnetic><a href={`mailto:${links.email}?subject=${encodeURIComponent('Internship opportunity')}`} className="btn btn-accent hire-btn">Email me about a role <ArrowUpRight /></a></Magnetic>
               <Magnetic><a href={links.resume} download className="btn hire-btn">Download resume ↓</a></Magnetic>
               <Magnetic><Ext href={links.linkedin} className="btn hire-btn">LinkedIn <ArrowUpRight /></Ext></Magnetic>
             </div>
@@ -653,6 +605,27 @@ export function Hire() {
 }
 
 /* ---------------- Contact + footer ---------------- */
+function CopyEmail() {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(links.email)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    } catch {
+      window.location.href = `mailto:${links.email}`
+    }
+  }
+  return (
+    <div className="copy-email">
+      <a href={`mailto:${links.email}`} className="mail-big">{links.email}</a>
+      <button type="button" className="copy-btn" onClick={copy} aria-live="polite">
+        {copied ? 'Copied ✓' : 'Copy email'}
+      </button>
+    </div>
+  )
+}
+
 export function Contact() {
   return (
     <section id="contact" className="section contact theme-accent" aria-labelledby="contact-title">
@@ -661,20 +634,18 @@ export function Contact() {
         <h2 id="contact-title">
           <SplitText text="Let's build" />
           <br />
-          <span className="serif"><SplitText text="something." delay={0.15} /></span>
+          <span className="serif"><SplitText text="something meaningful." delay={0.15} /></span>
         </h2>
         <div className="contact-grid">
           <Reveal className="q">
-            <span>Have an interesting idea?</span>
-            <span>Want to collaborate?</span>
-            <span>Want to talk about AI, software or hackathons?</span>
-            <a href={`mailto:${links.email}`} className="mail-big">{links.email}</a>
+            <span>Interested in collaborating, hiring, or discussing an idea?</span>
+            <CopyEmail />
           </Reveal>
           <Reveal className="actions" delay={0.1}>
             <Magnetic><a href={`mailto:${links.email}`} className="btn btn-primary">Email <ArrowUpRight /></a></Magnetic>
             <Magnetic><Ext href={links.linkedin} className="btn">LinkedIn <ArrowUpRight /></Ext></Magnetic>
             <Magnetic><Ext href={links.github} className="btn">GitHub <ArrowUpRight /></Ext></Magnetic>
-            <Magnetic><Ext href={links.resume} className="btn">Resume <ArrowUpRight /></Ext></Magnetic>
+            <Magnetic><Ext href={links.resume} className="btn">View resume <ArrowUpRight /></Ext></Magnetic>
           </Reveal>
         </div>
       </div>
@@ -685,18 +656,15 @@ export function Contact() {
 export function Footer() {
   return (
     <footer className="footer">
-      <div className="container">
-        <FitText text="Tanishq Tewari" className="footer-mark" />
-      </div>
       <div className="container footer-inner">
         <div>
-          <div className="logo">Tanishq<span className="accent">.</span><span className="cursor" aria-hidden="true">_</span></div>
-          <div className="mono" style={{ marginTop: '0.4rem' }}>{profile.title}</div>
+          <div className="logo">{profile.name}</div>
+          <div className="mono" style={{ marginTop: '0.4rem' }}>AI/ML Engineer • Software Developer</div>
         </div>
-        <nav className="links" aria-label="Social">
+        <nav className="links" aria-label="Footer">
           <Ext href={links.github} className="text-link">GitHub</Ext>
           <Ext href={links.linkedin} className="text-link">LinkedIn</Ext>
-          <a href={`mailto:${links.email}`} className="text-link">Email</a>
+          <Ext href={links.resume} className="text-link">Resume</Ext>
         </nav>
         <div className="mono">© {new Date().getFullYear()} {profile.name}</div>
       </div>

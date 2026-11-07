@@ -7,9 +7,11 @@ export const profile = {
   name: 'Tanishq Tewari',
   short: 'Tanishq',
   title: 'AI/ML Engineer · Software Developer',
+  roles: 'AI/ML Engineer • Software Developer • Builder',
+  achievement: { text: '2nd Place — OFFGRID Hackathon 2026', href: '#achievements' },
   positioning: ['AI/ML', 'Software Engineering', 'Full Stack', 'Problem Solving'],
   tagline:
-    'I build intelligent systems and software products that turn real-world problems into working solutions.',
+    'I build intelligent, production-ready software that solves real-world problems — combining AI/ML with modern full-stack engineering.',
   location: 'India',
   timezone: 'Asia/Kolkata',
   /** Shown once in the hero and once in Contact — the single source for the "open to work" message. */
@@ -34,9 +36,9 @@ export const links = {
 
 export const nav = [
   { id: 'about', label: 'About' },
+  { id: 'work', label: 'Projects' },
   { id: 'experience', label: 'Experience' },
-  { id: 'work', label: 'Work' },
-  { id: 'stack', label: 'Stack' },
+  { id: 'stack', label: 'Skills' },
   { id: 'achievements', label: 'Achievements' },
   { id: 'resume', label: 'Resume' },
   { id: 'contact', label: 'Contact' },
@@ -44,24 +46,24 @@ export const nav = [
 
 export const about = {
   paragraphs: [
-    "I'm Tanishq — a B.Tech Computer Science (AI & ML) student at Manipal University Jaipur who likes building AI systems that actually ship, not just notebooks that score well.",
-    'I enjoy taking ideas from problem statement → architecture → implementation → deployment. My recent work includes a graph neural network that debugs LLM agents, a multilingual NLP platform that triages civic complaints for city officers, an offline-first heart-risk screening app for health workers, and a skill-exchange platform for students.',
-    'Along the way I completed a 2-month in-campus AI & ML program at IIT Mandi (deep learning, CNNs, NLP, deployment) and led Team Codestorm to 2nd place at the OFFGRID Hackathon. I care about honest metrics, explainable models and products real people can use.',
+    'I build AI systems that ship — models wrapped in real APIs and interfaces that people can actually use.',
+    'Recent work: a graph neural network that pinpoints why LLM agents fail (93.1% top-1 root-cause accuracy), a multilingual NLP platform that triages civic complaints in English, Hindi and Hinglish, an offline-first heart-risk screening app for community health workers, and a skill-exchange platform for students.',
+    "I study Computer Science (AI & ML) at Manipal University Jaipur, completed IIT Mandi's in-campus AI & ML program, and led Team Codestorm to 2nd place at the OFFGRID Hackathon. I'm targeting Software Engineering and AI/ML internships.",
   ],
   currently: [
-    { label: 'Studying', value: 'B.Tech CSE (AI & ML)', sub: 'Manipal University Jaipur · 2024 – 2028' },
-    { label: 'Focus', value: 'AI/ML · Software Engineering · Full Stack' },
-    { label: 'Building', value: 'AI-powered products & intelligent systems' },
-    { label: 'Seeking', value: 'Software Engineering & AI/ML internships' },
+    { label: 'Education', value: 'B.Tech CSE (AI & ML)', sub: 'Manipal University Jaipur · 2024 – 2028' },
+    { label: 'Focus', value: 'AI/ML + Software Engineering' },
+    { label: 'Currently', value: 'Building AI-powered applications' },
+    { label: 'Achievement', value: '2nd Place — OFFGRID Hackathon 2026', sub: 'IEEE SB MUJ × TechIdeate · Team lead' },
   ],
   pipeline: ['Problem', 'Architecture', 'Implementation', 'Deployment'],
 }
 
 export const highlights: { big: string; unit: string; title: string; meta: string; img?: string; href?: string }[] = [
-  { big: '2nd', unit: 'Place', title: 'OFFGRID Hackathon', meta: 'TechIdeate 2026 · IEEE SB MUJ · Team lead', img: 'img/offgrid-award.jpg', href: '/work/galligraph' },
+  { big: '2nd', unit: 'Place', title: 'OFFGRID Hackathon', meta: 'TechIdeate 2026 · IEEE SB MUJ · Team lead', img: 'img/offgrid-award.webp', href: '/work/galligraph' },
   { big: 'AI/ML', unit: 'Intern', title: 'HCLTech', meta: 'Dec 2026 – Jan 2027' },
-  { big: 'IIT', unit: 'Mandi', title: 'AI & ML In-Campus Program', meta: 'Himshikhar 2026 · May – Jul 2026', img: 'img/iit-mandi-focus.jpg' },
-  { big: '93.1%', unit: '', title: 'Root-cause accuracy', meta: 'Black Box GNN vs 65.7% baseline', img: 'img/blackbox.jpg', href: '/work/blackbox' },
+  { big: 'IIT', unit: 'Mandi', title: 'AI & ML In-Campus Program', meta: 'Himshikhar 2026 · May – Jul 2026', img: 'img/iit-mandi-focus.webp' },
+  { big: '93.1%', unit: '', title: 'Root-cause accuracy', meta: 'Black Box GNN vs 65.7% baseline', img: 'img/blackbox.webp', href: '/work/blackbox' },
 ]
 
 export type TimelineEntry = {
@@ -95,7 +97,7 @@ export const timeline: TimelineEntry[] = [
     start: '2026-05-01',
     kind: 'Learning',
     meta: 'Himshikhar 2026 · Summer Residential Program',
-    image: { src: 'img/iit-mandi-focus.jpg', alt: 'Tanishq Tewari holding his Himshikhar 2026 certificate of completion in front of the IIT Mandi administrative building' },
+    image: { src: 'img/iit-mandi-focus.webp', alt: 'Tanishq Tewari holding his Himshikhar 2026 certificate of completion in front of the IIT Mandi administrative building' },
     details: [
       'Completed the 2-month in-campus Artificial Intelligence & Machine Learning program (Himshikhar 2026 Summer Residential Program) at IIT Mandi, with a certificate of completion.',
       'Covered supervised learning, deep learning, convolutional neural networks (CNNs), NLP and model deployment.',
@@ -126,7 +128,7 @@ export const timeline: TimelineEntry[] = [
       'Built GalliGraph — an AI triage system that turns messy civic complaints in English, Hindi and Hinglish into a ranked, de-duplicated, routed work queue.',
     ],
     tags: ['GalliGraph', 'NLP', 'FastAPI', 'React'],
-    image: { src: 'img/offgrid-award.jpg', alt: 'Team Codestorm receiving the OFFGRID 2nd Position award on stage at TechIdeate 2026' },
+    image: { src: 'img/offgrid-award.webp', alt: 'Team Codestorm receiving the OFFGRID 2nd Position award on stage at TechIdeate 2026' },
   },
   {
     org: 'Aperture',
@@ -205,8 +207,8 @@ export const beyond = [
 export const featuredPost = {
   account: 'muj.techideate',
   followers: '1,412 followers',
-  avatar: 'img/ig/avatar.jpg',
-  slides: [1, 2, 3, 4, 5, 6].map((n) => `img/ig/slide-${n}.jpg`),
+  avatar: 'img/ig/avatar.webp',
+  slides: [1, 2, 3, 4, 5, 6].map((n) => `img/ig/slide-${n}.webp`),
   /** 1-based slide where Tanishq appears; the post opens here. */
   mySlide: 5,
   likes: 111,

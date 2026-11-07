@@ -13,118 +13,12 @@ import {
   wrap,
 } from 'framer-motion'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { EASE } from './ui'
-
-/* ---------------- Preloader: once per session ---------------- */
-export function Preloader() {
-  const reduce = useReducedMotion()
-  const [show, setShow] = useState(() => !reduce && typeof sessionStorage !== 'undefined' && !sessionStorage.getItem('tt-loaded'))
-  const [n, setN] = useState(0)
-
-  useEffect(() => {
-    if (!show) return
-    document.body.style.overflow = 'hidden'
-    const ctrl = animate(0, 100, { duration: 1.5, ease: [0.65, 0, 0.35, 1], onUpdate: (v) => setN(Math.round(v)) })
-    const t = setTimeout(() => {
-      sessionStorage.setItem('tt-loaded', '1')
-      setShow(false)
-      document.body.style.overflow = ''
-    }, 1750)
-    return () => { ctrl.stop(); clearTimeout(t); document.body.style.overflow = '' }
-  }, [show])
-
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div className="preloader" aria-hidden="true" exit={{ clipPath: 'inset(0 0 100% 0)' }} transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}>
-          <div className="pl-top mono"><span className="sq accent-bg" /> Tanishq Tewari — Portfolio ’26</div>
-          <div className="pl-name">
-            {['TANISHQ', 'TEWARI'].map((w, wi) => (
-              <span key={w} className="pl-word">
-                {w.split('').map((c, i) => (
-                  <span key={i} className="pl-ch">
-                    <motion.span initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.05 + (wi * 7 + i) * 0.03 }}>
-                      {c}
-                    </motion.span>
-                  </span>
-                ))}
-              </span>
-            ))}
-          </div>
-          <div className="pl-bottom">
-            <span className="mono">AI/ML Engineer · Software Developer</span>
-            <span className="pl-count">{String(n).padStart(3, '0')}</span>
-          </div>
-          <motion.div className="pl-bar" style={{ scaleX: n / 100 }} />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  )
-}
 
 /* ---------------- Scroll progress ---------------- */
 export function ScrollProgress() {
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.3 })
   return <motion.div className="scroll-progress" style={{ scaleX }} aria-hidden="true" />
-}
-
-/* ---------------- Custom cursor (fine pointers only) ---------------- */
-export function Cursor() {
-  const reduce = useReducedMotion()
-  const [enabled, setEnabled] = useState(false)
-  const [state, setState] = useState<{ hover: boolean; label: string; down: boolean }>({ hover: false, label: '', down: false })
-  const x = useMotionValue(-100)
-  const y = useMotionValue(-100)
-  const rx = useSpring(x, { stiffness: 500, damping: 40, mass: 0.6 })
-  const ry = useSpring(y, { stiffness: 500, damping: 40, mass: 0.6 })
-
-  useEffect(() => {
-    if (reduce || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-    setEnabled(true)
-    const move = (e: PointerEvent) => {
-      x.set(e.clientX)
-      y.set(e.clientY)
-      const t = (e.target as HTMLElement | null)?.closest<HTMLElement>('a, button, [data-cursor], [role="tab"]')
-      const label = t?.dataset.cursor ?? ''
-      setState((s) => (s.hover === !!t && s.label === label ? s : { ...s, hover: !!t, label }))
-    }
-    const down = () => setState((s) => ({ ...s, down: true }))
-    const up = () => setState((s) => ({ ...s, down: false }))
-    window.addEventListener('pointermove', move)
-    window.addEventListener('pointerdown', down)
-    window.addEventListener('pointerup', up)
-    document.documentElement.classList.add('has-cursor')
-    return () => {
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerdown', down)
-      window.removeEventListener('pointerup', up)
-      document.documentElement.classList.remove('has-cursor')
-    }
-  }, [reduce, x, y])
-
-  if (!enabled) return null
-  const size = state.label ? 92 : state.hover ? 54 : 30
-  return (
-    <>
-      <motion.div className="cursor-dot" style={{ x, y }} aria-hidden="true" />
-      <motion.div
-        className={`cursor-ring ${state.label ? 'labelled' : ''}`}
-        style={{ x: rx, y: ry }}
-        animate={{ width: size, height: size, scale: state.down ? 0.85 : 1 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-        aria-hidden="true"
-      >
-        <AnimatePresence>
-          {state.label && (
-            <motion.span initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.6 }}>
-              {state.label}
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </>
-  )
 }
 
 /* ---------------- Velocity marquee ---------------- */
@@ -165,49 +59,6 @@ export function Marquee({ items, speed = 3, className = '', reverse = false }: {
         {row}
       </motion.div>
     </div>
-  )
-}
-
-/* ---------------- Text scramble ---------------- */
-const GLYPHS = '!<>-_\\/[]{}—=+*^?#01ABCDEFXYZ'
-export function Scramble({ text, className, trigger = 'view' }: { text: string; className?: string; trigger?: 'view' | 'hover' | 'both' }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' })
-  const reduce = useReducedMotion()
-  const [out, setOut] = useState(text)
-  const raf = useRef(0)
-
-  const run = () => {
-    if (reduce) return
-    cancelAnimationFrame(raf.current)
-    let frame = 0
-    const total = 18
-    const tick = () => {
-      frame++
-      const p = frame / total
-      setOut(
-        text
-          .split('')
-          .map((c, i) => (c === ' ' || i / text.length < p ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]))
-          .join(''),
-      )
-      if (frame < total) raf.current = requestAnimationFrame(tick)
-      else setOut(text)
-    }
-    tick()
-  }
-
-  useEffect(() => {
-    if (inView && trigger !== 'hover') run()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inView])
-  useEffect(() => () => cancelAnimationFrame(raf.current), [])
-
-  return (
-    <span ref={ref} className={className} onMouseEnter={trigger !== 'view' ? run : undefined}>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true">{out}</span>
-    </span>
   )
 }
 
@@ -339,7 +190,6 @@ export function BackToTop() {
           className="to-top"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           aria-label="Back to top"
-          data-cursor="Top"
           initial={{ opacity: 0, scale: 0.4, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.4, y: 20 }}

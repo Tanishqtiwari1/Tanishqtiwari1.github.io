@@ -24,17 +24,16 @@ export default function Home() {
       <Hero />
       <Marquee className="mq-accent" items={['AI/ML Engineer', 'Software Developer', 'Graph Neural Networks', 'NLP', 'Full Stack', 'Hackathon Builder', 'FastAPI', 'React', 'PyTorch']} />
       <About />
-      <Experience />
       <Featured />
       <Showcase />
+      <Experience />
       <Stack />
       <Achievements />
-      <Resume />
+      <GitHub />
       <Now />
       <Beyond />
-      <GitHub />
+      <Resume />
       <Hire />
-      <Marquee className="mq-dark" reverse speed={2.5} items={["Let's build something", 'Software · AI/ML', 'AI · Software · Hackathons', 'Say hello']} />
       <Contact />
     </>
   )

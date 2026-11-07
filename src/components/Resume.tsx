@@ -13,7 +13,7 @@ export default function Resume() {
   return (
     <section id="resume" className="section theme-dark" aria-labelledby="resume-title">
       <div className="container">
-        <SectionHead id="resume-title" kicker="07 — Resume" title="Resume" sub="the one-pager, right here" aside={`Updated · ${resume.updated}`} />
+        <SectionHead id="resume-title" kicker="09 — Resume" title="Resume" sub="the one-pager, right here" aside={`Updated · ${resume.updated}`} />
 
         <div className="rs-bar">
           <div className="rs-toggle" role="tablist" aria-label="Resume view">

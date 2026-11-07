@@ -47,7 +47,7 @@ export default function Hero() {
           transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}
         >
           <motion.img
-            src={`${import.meta.env.BASE_URL}img/tanishq-cutout.png`}
+            src={`${import.meta.env.BASE_URL}img/tanishq-cutout.webp`}
             alt="Portrait of Tanishq Tewari in a white polo shirt, arms crossed, smiling"
             width={990}
             height={1100}
@@ -57,7 +57,7 @@ export default function Hero() {
         </motion.figure>
 
         <motion.div className="hero-badge" initial={{ opacity: 0, scale: 0.6, rotate: -40 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.9 }}>
-          <a href="#work" aria-label="See the highlight project" data-cursor="Work">
+          <a href="#work" aria-label="Jump to projects">
             <SpinBadge text="AI/ML ✦ SOFTWARE ✦ OPEN TO INTERNSHIPS ✦ ">
               <span className="spin-arrow">↓</span>
             </SpinBadge>
@@ -65,17 +65,20 @@ export default function Hero() {
         </motion.div>
 
         <motion.div className="hero-side" {...fade(0.6)}>
-          <span className="mono"><span className="sq" aria-hidden="true" /> {profile.title}</span>
-          <span className="mono" style={{ color: 'var(--muted)' }}>
+          <span className="hero-roles">{profile.roles}</span>
+          <span className="mono" style={{ color: 'var(--fg)' }}>
             B.Tech CSE · Manipal University Jaipur
           </span>
+          <a href={profile.achievement.href} className="hero-award">
+            <span aria-hidden="true">🏆</span> {profile.achievement.text}
+          </a>
           <span className="mono" style={{ color: 'var(--muted)' }}>
             {profile.location} · {time} IST
           </span>
         </motion.div>
 
         <motion.div className="hero-aside" {...fade(0.75)}>
-          <a href="#hire" className="avail" data-cursor="Hire">
+          <a href="#hire" className="avail">
             <span className="avail-dot" aria-hidden="true" />
             <span className="avail-text">
               <b>{profile.availability.headline}</b>
@@ -86,16 +89,15 @@ export default function Hero() {
           <p className="hero-tagline">{profile.tagline}</p>
           <div className="hero-actions">
             <Magnetic>
-              <a href="#work" className="btn btn-primary">View my work <ArrowUpRight /></a>
+              <a href="#work" className="btn btn-primary">View projects <ArrowUpRight /></a>
             </Magnetic>
             <Magnetic>
-              <a href={links.resume} className="btn" download>Resume ↓</a>
+              <a href={links.resume} className="btn" download>Download resume ↓</a>
             </Magnetic>
           </div>
           <div className="hero-links">
             <Ext href={links.github} className="text-link">GitHub</Ext>
             <Ext href={links.linkedin} className="text-link">LinkedIn</Ext>
-            <a href={`mailto:${links.email}`} className="text-link">Email</a>
           </div>
         </motion.div>
 

@@ -82,7 +82,7 @@ export default function CaseStudy() {
         <div className="cs-gallery">
           {s.gallery.map((g) => (
             <figure key={g.src} className={g.wide ? 'wide' : ''}>
-              <div className="cs-shot" data-cursor="Look">
+              <div className="cs-shot">
                 <motion.img
                   src={`${import.meta.env.BASE_URL}${g.src}`}
                   alt={g.caption}

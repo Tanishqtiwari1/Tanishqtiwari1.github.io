@@ -1,4 +1,3 @@
-import '@fontsource-variable/inter-tight'
 import '@fontsource-variable/jetbrains-mono'
 import '@fontsource-variable/archivo/wdth.css'
 import './styles/global.css'

@@ -48,109 +48,23 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    slug: 'blackbox',
-    index: '01',
-    name: 'Black Box',
-    tagline: 'Flight Recorder & Debugger for AI Agents',
-    description:
-      'A debugging platform that records every LLM decision and tool call of an AI agent as OpenTelemetry traces, finds the step that actually caused a failure with a graph neural network, then replays from that step and verifies the fix — without re-running the whole agent.',
-    long:
-      'AI agents now book travel, answer customers and write code — and when one gives a wrong answer, nobody knows why. A run can have 30 steps of model decisions and tool calls, and one bad value early on passes silently through every later step. Black Box is a flight recorder for agents: it records the run, ranks the step that caused the failure (not just where it surfaced), explains why with evidence from the trace, and replays from a checkpoint so only the affected steps run again.',
-    year: 'Oct 2026',
-    event: "BNB'26 CodeStorm Hackathon · GDG on Campus",
-    highlight: '★ Highlight project',
-    tech: ['Python', 'PyTorch', 'GNN', 'FastAPI', 'OpenTelemetry', 'LLM Agents', 'Pytest'],
-    github: 'https://github.com/Tanishqtiwari1/BlackBox',
-    live: 'https://blackbox-flight-recorder.onrender.com',
-    image: 'img/blackbox.jpg',
-    featured: true,
-    stats: [
-      { value: '93.1%', label: 'Top-1 root-cause accuracy', how: 'GNN vs 65.7% rule-based baseline' },
-      { value: '88.4%', label: 'On unseen fault types' },
-      { value: '34%', label: 'Steps re-executed on replay' },
-      { value: '98.1%', label: 'Failures fixed within 3 replays' },
-    ],
-    study: {
-      problem: [
-        'AI agents are moving into production, but when an agent fails, the error usually shows up at the very end of a long chain of model calls and tool calls. The step that caused it can be ten steps earlier.',
-        'Engineers debug this by reading logs line by line, then re-running the entire agent to test a fix — slow, expensive, and it repeats every model call.',
-      ],
-      solution: [
-        'Black Box records every model decision and tool call as an OpenTelemetry trace, detects the failure, and ranks the step that caused it using a graph neural network trained on how errors propagate through trace graphs.',
-        'It explains the diagnosis with evidence from the trace (e.g. a flight price 100× its historical baseline), replays from that step’s checkpoint reusing everything before it, repairs the step, and verifies the fix with a step-by-step diff.',
-      ],
-      howItWorks: [
-        { title: 'Record', body: 'Agents emit OpenTelemetry spans using GenAI semantic conventions; a REST ingestion API turns each run into a trace graph of decisions and tool calls.' },
-        { title: 'Detect & explain', body: 'A PyTorch GNN with directional message passing scores every step as a root-cause candidate, so it finds the first bad step even when the agent takes a new path.' },
-        { title: 'Replay', body: 'Checkpointed, event-sourced replay restarts from the root-cause step and re-executes only what depends on it — about a third of the steps.' },
-        { title: 'Repair & verify', body: 'Re-run the step, patch its output or patch its arguments, then verify with the task check and a diff of the original vs. repaired run.' },
-      ],
-      pipeline: {
-        caption: 'The full loop, from a failed run to a verified fix.',
-        nodes: [
-          { label: 'Detect', sub: 'failed run' },
-          { label: 'Explain', sub: 'GNN root cause' },
-          { label: 'Replay', sub: 'from checkpoint' },
-          { label: 'Repair', sub: 'patch the step' },
-          { label: 'Verify', sub: 'task check + diff' },
-        ],
-      },
-      architecture: {
-        caption: 'Live demo agent runs on Groq (gpt-oss-20b) or locally on Ollama (qwen2.5:7b).',
-        nodes: [
-          { label: 'AI agent', sub: 'Groq / Ollama' },
-          { label: 'OpenTelemetry', sub: 'GenAI spans' },
-          { label: 'FastAPI', sub: 'ingestion API' },
-          { label: 'Trace graph', sub: 'steps + edges' },
-          { label: 'GNN', sub: 'PyTorch' },
-          { label: 'Replay engine', sub: 'event-sourced' },
-        ],
-      },
-      gallery: [
-        { src: 'img/blackbox.jpg', caption: 'Landing — the failed run, its root cause and the impacted steps.', wide: true },
-        { src: 'img/blackbox-graph.jpg', caption: 'Investigation graph: how the error propagated.' },
-        { src: 'img/blackbox-repair.jpg', caption: 'Repair workspace: the fix, replayed and verified.' },
-      ],
-      stack: [
-        { group: 'AI / ML', items: ['PyTorch', 'Graph Neural Networks', 'LLM Agents', 'Groq API', 'Ollama'] },
-        { group: 'Backend', items: ['Python', 'FastAPI', 'OpenTelemetry'] },
-        { group: 'Quality', items: ['Pytest (29 tests)', 'Render'] },
-      ],
-      challenges: [
-        'Finding the cause, not the symptom: the step where an error surfaces is rarely the one that introduced it.',
-        'Generalising to new failures — the GNN is evaluated on fault types it never saw in training.',
-        'Replaying cheaply: event-sourced checkpoints so a fix doesn’t mean re-running every model call.',
-      ],
-      learned: [
-        'Treating agent runs as graphs makes error propagation learnable.',
-        'Observability standards (OpenTelemetry) make a tool plug into real agents instead of a toy demo.',
-      ],
-      results: [
-        { value: '93.1%', label: 'Top-1 root-cause accuracy', how: 'vs 65.7% for a rule-based baseline, on 5,000 generated runs with injected faults' },
-        { value: '88.4%', label: 'Accuracy on unseen fault types' },
-        { value: '34%', label: 'Of steps re-executed during replay' },
-        { value: '90.9%', label: 'Failures fixed by repairing the top-ranked step', how: '98.1% within 3 replays' },
-        { value: '29', label: 'Pytest tests' },
-      ],
-    },
-  },
-  {
     slug: 'galligraph',
-    index: '02',
+    index: '01',
     name: 'GalliGraph',
-    tagline: 'AI Civic Complaint Triage Platform',
+    tagline: 'AI-powered Civic Complaint Intelligence Platform',
     description:
-      'An AI system that turns free-text civic complaints in English, Hindi and Hinglish into a ranked, de-duplicated, routed action queue for municipal officers — with explainable priority scores and verified closure.',
+      'Converts unstructured citizen complaints — in English, Hindi and Hinglish — into structured, prioritised and routable civic issues, giving municipal officers a ranked, de-duplicated work queue with explainable priority scores.',
     long:
       'Indian cities receive complaints through apps, websites and WhatsApp as messy free text. Someone has to read each one and decide what it is, where, how bad, and who fixes it. GalliGraph does that triage automatically in ~15 ms per complaint, merges duplicates of the same pothole, ranks issues with reasons officers can read, and only closes an issue with evidence the citizen can verify.',
     year: 'Oct 2026',
     role: 'Team lead · Team Codestorm',
     event: 'OFFGRID Hackathon · TechIdeate 2026 · IEEE SB, Manipal University Jaipur',
-    highlight: '🥈 2nd Position — OFFGRID Hackathon, MUJ',
+    highlight: '🏆 2nd Place — OFFGRID Hackathon 2026',
+    featured: true,
     tech: ['Python', 'Scikit-Learn', 'NLP', 'FastAPI', 'React', 'TypeScript', 'Docker'],
     github: 'https://github.com/Tanishqtiwari1/GalliGraph',
     live: 'https://galligraph.onrender.com',
-    image: 'img/galligraph.jpg',
+    image: 'img/galligraph.webp',
     stats: [
       { value: '80.6%', label: 'Accuracy on unseen real complaints' },
       { value: '56%', label: 'Fewer tickets after de-duplication' },
@@ -194,8 +108,8 @@ export const projects: Project[] = [
         ],
       },
       gallery: [
-        { src: 'img/offgrid-award.jpg', caption: 'Receiving the 2nd Position award at OFFGRID, TechIdeate 2026 — Manipal University Jaipur. Photo: Aperture, Digital Arts Society.', wide: true },
-        { src: 'img/galligraph.jpg', caption: 'Citizen portal — report, track and see civic health at a glance.' },
+        { src: 'img/offgrid-award.webp', caption: 'Receiving the 2nd Position award at OFFGRID, TechIdeate 2026 — Manipal University Jaipur. Photo: Aperture, Digital Arts Society.', wide: true },
+        { src: 'img/galligraph.webp', caption: 'Citizen portal — report, track and see civic health at a glance.' },
       ],
       stack: [
         { group: 'AI / ML', items: ['Scikit-Learn', 'TF-IDF', 'Logistic Regression', 'NLP'] },
@@ -225,10 +139,95 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: 'blackbox',
+    index: '02',
+    name: 'Black Box',
+    tagline: 'Flight Recorder & Debugger for AI Agents',
+    description:
+      'A debugging platform that records every LLM decision and tool call of an AI agent as OpenTelemetry traces, finds the step that actually caused a failure with a graph neural network, then replays from that step and verifies the fix — without re-running the whole agent.',
+    long:
+      'AI agents now book travel, answer customers and write code — and when one gives a wrong answer, nobody knows why. A run can have 30 steps of model decisions and tool calls, and one bad value early on passes silently through every later step. Black Box is a flight recorder for agents: it records the run, ranks the step that caused the failure (not just where it surfaced), explains why with evidence from the trace, and replays from a checkpoint so only the affected steps run again.',
+    year: 'Oct 2026',
+    event: "BNB'26 CodeStorm Hackathon · GDG on Campus",
+    tech: ['Python', 'PyTorch', 'GNN', 'FastAPI', 'OpenTelemetry', 'LLM Agents', 'Pytest'],
+    github: 'https://github.com/Tanishqtiwari1/BlackBox',
+    live: 'https://blackbox-flight-recorder.onrender.com',
+    image: 'img/blackbox.webp',
+    stats: [
+      { value: '93.1%', label: 'Top-1 root-cause accuracy', how: 'GNN vs 65.7% rule-based baseline' },
+      { value: '88.4%', label: 'On unseen fault types' },
+      { value: '34%', label: 'Steps re-executed on replay' },
+      { value: '98.1%', label: 'Failures fixed within 3 replays' },
+    ],
+    study: {
+      problem: [
+        'AI agents are moving into production, but when an agent fails, the error usually shows up at the very end of a long chain of model calls and tool calls. The step that caused it can be ten steps earlier.',
+        'Engineers debug this by reading logs line by line, then re-running the entire agent to test a fix — slow, expensive, and it repeats every model call.',
+      ],
+      solution: [
+        'Black Box records every model decision and tool call as an OpenTelemetry trace, detects the failure, and ranks the step that caused it using a graph neural network trained on how errors propagate through trace graphs.',
+        'It explains the diagnosis with evidence from the trace (e.g. a flight price 100× its historical baseline), replays from that step’s checkpoint reusing everything before it, repairs the step, and verifies the fix with a step-by-step diff.',
+      ],
+      howItWorks: [
+        { title: 'Record', body: 'Agents emit OpenTelemetry spans using GenAI semantic conventions; a REST ingestion API turns each run into a trace graph of decisions and tool calls.' },
+        { title: 'Detect & explain', body: 'A PyTorch GNN with directional message passing scores every step as a root-cause candidate, so it finds the first bad step even when the agent takes a new path.' },
+        { title: 'Replay', body: 'Checkpointed, event-sourced replay restarts from the root-cause step and re-executes only what depends on it — about a third of the steps.' },
+        { title: 'Repair & verify', body: 'Re-run the step, patch its output or patch its arguments, then verify with the task check and a diff of the original vs. repaired run.' },
+      ],
+      pipeline: {
+        caption: 'The full loop, from a failed run to a verified fix.',
+        nodes: [
+          { label: 'Detect', sub: 'failed run' },
+          { label: 'Explain', sub: 'GNN root cause' },
+          { label: 'Replay', sub: 'from checkpoint' },
+          { label: 'Repair', sub: 'patch the step' },
+          { label: 'Verify', sub: 'task check + diff' },
+        ],
+      },
+      architecture: {
+        caption: 'Live demo agent runs on Groq (gpt-oss-20b) or locally on Ollama (qwen2.5:7b).',
+        nodes: [
+          { label: 'AI agent', sub: 'Groq / Ollama' },
+          { label: 'OpenTelemetry', sub: 'GenAI spans' },
+          { label: 'FastAPI', sub: 'ingestion API' },
+          { label: 'Trace graph', sub: 'steps + edges' },
+          { label: 'GNN', sub: 'PyTorch' },
+          { label: 'Replay engine', sub: 'event-sourced' },
+        ],
+      },
+      gallery: [
+        { src: 'img/blackbox.webp', caption: 'Landing — the failed run, its root cause and the impacted steps.', wide: true },
+        { src: 'img/blackbox-graph.webp', caption: 'Investigation graph: how the error propagated.' },
+        { src: 'img/blackbox-repair.webp', caption: 'Repair workspace: the fix, replayed and verified.' },
+      ],
+      stack: [
+        { group: 'AI / ML', items: ['PyTorch', 'Graph Neural Networks', 'LLM Agents', 'Groq API', 'Ollama'] },
+        { group: 'Backend', items: ['Python', 'FastAPI', 'OpenTelemetry'] },
+        { group: 'Quality', items: ['Pytest (29 tests)', 'Render'] },
+      ],
+      challenges: [
+        'Finding the cause, not the symptom: the step where an error surfaces is rarely the one that introduced it.',
+        'Generalising to new failures — the GNN is evaluated on fault types it never saw in training.',
+        'Replaying cheaply: event-sourced checkpoints so a fix doesn’t mean re-running every model call.',
+      ],
+      learned: [
+        'Treating agent runs as graphs makes error propagation learnable.',
+        'Observability standards (OpenTelemetry) make a tool plug into real agents instead of a toy demo.',
+      ],
+      results: [
+        { value: '93.1%', label: 'Top-1 root-cause accuracy', how: 'vs 65.7% for a rule-based baseline, on 5,000 generated runs with injected faults' },
+        { value: '88.4%', label: 'Accuracy on unseen fault types' },
+        { value: '34%', label: 'Of steps re-executed during replay' },
+        { value: '90.9%', label: 'Failures fixed by repairing the top-ranked step', how: '98.1% within 3 replays' },
+        { value: '29', label: 'Pytest tests' },
+      ],
+    },
+  },
+  {
     slug: 'cardioguard',
     index: '03',
     name: 'CardioGuard',
-    tagline: 'AI Cardiovascular Risk Screening Platform',
+    tagline: 'Explainable AI for Heart-Disease Risk Screening',
     description:
       'An offline-first heart-risk screening app for community health workers: an XGBoost model with interpretable predictions, an in-browser risk model that works without internet, Hindi/English UI, OCR of lab reports and PDF reports.',
     long:
@@ -237,7 +236,7 @@ export const projects: Project[] = [
     tech: ['Python', 'XGBoost', 'Scikit-Learn', 'FastAPI', 'React', 'PWA'],
     github: 'https://github.com/Tanishqtiwari1/CardioGuard',
     live: 'https://tanishqtiwari1.github.io/CardioGuard/',
-    image: 'img/cardioguard.jpg',
+    image: 'img/cardioguard.webp',
     stats: [
       { value: '82.1%', label: 'Accuracy, held-out test set' },
       { value: '0.915', label: 'ROC-AUC' },
@@ -266,7 +265,7 @@ export const projects: Project[] = [
           { label: 'Serve', sub: 'FastAPI + PWA' },
         ],
       },
-      gallery: [{ src: 'img/cardioguard.jpg', caption: 'Live risk estimate with drag-to-explore sliders.', wide: true }],
+      gallery: [{ src: 'img/cardioguard.webp', caption: 'Live risk estimate with drag-to-explore sliders.', wide: true }],
       stack: [
         { group: 'AI / ML', items: ['XGBoost', 'Scikit-Learn', 'OCR'] },
         { group: 'Backend', items: ['Python', 'FastAPI', 'SQLAlchemy', 'Pytest'] },
@@ -302,7 +301,7 @@ export const projects: Project[] = [
     tech: ['React', 'FastAPI', 'SQLAlchemy', 'SQLite', 'Python', 'Pytest'],
     github: 'https://github.com/Tanishqtiwari1/Guildspace',
     live: 'https://tanishqtiwari1.github.io/Guildspace/',
-    image: 'img/guildspace.jpg',
+    image: 'img/guildspace.webp',
     study: {
       problem: [
         'Students have skills worth sharing and gaps they want to fill, but finding a compatible peer mentor — with matching skills, free time and trust — is left to chance. Faculty updates are scattered across groups and notice boards.',
@@ -325,7 +324,7 @@ export const projects: Project[] = [
           { label: 'SQLite', sub: 'records + ledger' },
         ],
       },
-      gallery: [{ src: 'img/guildspace.jpg', caption: 'Learn something. Teach something. Grow together.', wide: true }],
+      gallery: [{ src: 'img/guildspace.webp', caption: 'Learn something. Teach something. Grow together.', wide: true }],
       stack: [
         { group: 'Frontend', items: ['React', 'JavaScript', 'GitHub Pages'] },
         { group: 'Backend', items: ['Python', 'FastAPI', 'SQLAlchemy', 'SQLite'] },
@@ -344,5 +343,4 @@ export const projects: Project[] = [
 ]
 
 export const mainProjects = projects.filter((p) => !p.archive)
-export const archiveProjects = projects.filter((p) => p.archive)
 export const getProject = (slug?: string) => projects.find((p) => p.slug === slug)

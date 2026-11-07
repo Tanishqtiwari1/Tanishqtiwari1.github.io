@@ -1,7 +1,7 @@
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { lazy, Suspense, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
-import { BackToTop, Cursor, Preloader, ScrollProgress, Spotlight } from './components/Effects'
+import { BackToTop, ScrollProgress, Spotlight } from './components/Effects'
 import Nav from './components/Nav'
 import { Footer } from './components/Sections'
 import { EASE } from './components/ui'
@@ -43,9 +43,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <a href="#main" className="skip-link">Skip to content</a>
-      <Preloader />
       <ScrollProgress />
-      <Cursor />
       <Spotlight />
       <BackToTop />
       <Nav />

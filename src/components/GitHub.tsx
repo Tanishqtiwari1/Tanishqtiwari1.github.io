@@ -12,7 +12,7 @@ const USER = links.githubUser
 const PINNED = ['GalliGraph', 'CardioGuard', 'BlackBox']
 const MAX_REPOS = 6
 
-type Repo = { name: string; description: string | null; html_url: string; stargazers_count: number; language: string | null; fork: boolean; pushed_at: string }
+type Repo = { name: string; description: string | null; html_url: string; stargazers_count: number; language: string | null; fork: boolean; pushed_at: string; size: number }
 type User = { avatar_url: string; public_repos: number; followers: number; name: string | null; html_url: string }
 type Day = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }
 type Contrib = { total: Record<string, number>; contributions: Day[] }
@@ -87,7 +87,8 @@ export default function GitHub() {
     cached<User>('gh-user', `https://api.github.com/users/${USER}`).then(setUser).catch(() => {})
     cached<Repo[]>('gh-repos', `https://api.github.com/users/${USER}/repos?per_page=100&sort=pushed`)
       .then((all) => {
-        const own = all.filter((r) => !r.fork && r.name.toLowerCase() !== `${USER}.github.io`.toLowerCase())
+        // Skip forks, empty repos and this site's own repo — only meaningful work.
+        const own = all.filter((r) => !r.fork && r.size > 0 && r.name.toLowerCase() !== `${USER}.github.io`.toLowerCase())
         const pinned = PINNED.map((n) => own.find((r) => r.name.toLowerCase() === n.toLowerCase())).filter(Boolean) as Repo[]
         const others = own.filter((r) => !pinned.includes(r))
         setRepos([...pinned, ...others].slice(0, MAX_REPOS))
@@ -103,7 +104,7 @@ export default function GitHub() {
   return (
     <section id="github" className="section" aria-labelledby="gh-title">
       <div className="container">
-        <SectionHead id="gh-title" kicker="09 — Open source" title="GitHub" sub="in public" aside={<Ext href={links.github} className="text-link">@{USER} ↗</Ext>} />
+        <SectionHead id="gh-title" kicker="06 — GitHub" title="Building" sub="in public" aside={<Ext href={links.github} className="btn btn-primary">View GitHub <ArrowUpRight /></Ext>} />
 
         <Reveal className="gh-top">
           <div className="gh-profile">

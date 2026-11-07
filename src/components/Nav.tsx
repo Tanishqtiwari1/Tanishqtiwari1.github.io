@@ -3,22 +3,21 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { links, nav, profile } from '../data/site'
 import { useActiveSection } from '../hooks/useActiveSection'
-import { Scramble } from './Effects'
 import { ArrowUpRight, EASE, Ext, Monogram } from './ui'
 
 /** Every section on the home page, in order — drives the top-left "(03—10) Work" indicator. */
 const ALL_SECTIONS = [
   { id: 'top', label: 'Index' },
   { id: 'about', label: 'About' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'work', label: 'Highlight' },
+  { id: 'work', label: 'Projects' },
   { id: 'projects', label: 'Projects' },
-  { id: 'stack', label: 'Stack' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'stack', label: 'Skills' },
   { id: 'achievements', label: 'Achievements' },
-  { id: 'resume', label: 'Resume' },
+  { id: 'github', label: 'GitHub' },
   { id: 'now', label: 'Now' },
   { id: 'beyond', label: 'Beyond code' },
-  { id: 'github', label: 'GitHub' },
+  { id: 'resume', label: 'Resume' },
   { id: 'hire', label: 'Internships' },
   { id: 'contact', label: 'Contact' },
 ]
@@ -74,7 +73,7 @@ export default function Nav() {
               <span className="sq accent-bg" aria-hidden="true" />
               {profile.name}
             </Link>
-            <a href={href('hire')} className="bar-avail" data-cursor="Hire">
+            <a href={href('hire')} className="bar-avail">
               <span className="avail-dot" aria-hidden="true" />
               <span>{profile.availability.headline}</span>
             </a>
@@ -86,7 +85,7 @@ export default function Nav() {
                 <li key={n.id}>
                   <a href={href(n.id)} className={isActive(n.id) ? 'active' : ''} aria-current={isActive(n.id) ? 'location' : undefined}>
                     {isActive(n.id) && <motion.span layoutId="bar-sq" className="sq" transition={{ type: 'spring', stiffness: 400, damping: 34 }} />}
-                    <Scramble text={n.label} trigger="hover" />
+                    {n.label}
                   </a>
                 </li>
               ))}
